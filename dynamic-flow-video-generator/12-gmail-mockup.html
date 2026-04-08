@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Screen Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Google Sans', Roboto, Arial, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .mockup-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .gmail-header {
+            background: #ea4335;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .gmail-logo {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .gmail-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .gmail-toolbar {
+            background: #f1f3f4;
+            padding: 8px 20px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .toolbar-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toolbar-btn:hover {
+            background: #f8f9fa;
+            border-color: #ea4335;
+        }
+        .toolbar-btn.primary {
+            background: #ea4335;
+            color: white;
+            border-color: #ea4335;
+        }
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 8px 40px 8px 16px;
+            border: 1px solid #dadce0;
+            border-radius: 24px;
+            font-size: 14px;
+            background: white;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #ea4335;
+        }
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #5f6368;
+        }
+        .gmail-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f8f9fa;
+            border-right: 1px solid #dadce0;
+            padding: 20px;
+        }
+        .compose-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ea4335;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .compose-btn:hover {
+            background: #d33b2c;
+            box-shadow: 0 2px 8px rgba(234, 67, 53, 0.3);
+        }
+        .nav-menu {
+            list-style: none;
+        }
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            color: #3c4043;
+            text-decoration: none;
+            border-radius: 0 24px 24px 0;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background: #f1f3f4;
+        }
+        .nav-link.active {
+            background: #fce8e6;
+            color: #ea4335;
+            font-weight: 500;
+        }
+        .nav-count {
+            margin-left: auto;
+            background: #ea4335;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .email-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .email-item {
+            display: flex;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .email-item:hover {
+            background: #f8f9fa;
+        }
+        .email-item.unread {
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+        .email-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #dadce0;
+            border-radius: 2px;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .email-checkbox:hover {
+            border-color: #ea4335;
+        }
+        .email-checkbox.checked {
+            background: #ea4335;
+            border-color: #ea4335;
+        }
+        .email-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        .email-star {
+            color: #dadce0;
+            font-size: 18px;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .email-star:hover {
+            color: #fbbc04;
+        }
+        .email-star.starred {
+            color: #fbbc04;
+        }
+        .email-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .email-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .email-sender {
+            font-size: 14px;
+            color: #3c4043;
+            font-weight: 500;
+        }
+        .email-time {
+            font-size: 12px;
+            color: #5f6368;
+            margin-left: auto;
+        }
+        .email-subject {
+            font-size: 14px;
+            color: #3c4043;
+            margin-bottom: 4px;
+        }
+        .email-preview {
+            font-size: 13px;
+            color: #5f6368;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .email-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .email-tag {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .tag-important {
+            background: #fce8e6;
+            color: #ea4335;
+        }
+        .tag-work {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        .tag-personal {
+            background: #e6f4ea;
+            color: #34a853;
+        }
+        
+        /* Email Detail View */
+        .email-detail {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: none;
+        }
+        .email-detail.active {
+            display: block;
+        }
+        .email-detail-header {
+            margin-bottom: 30px;
+        }
+        .email-detail-subject {
+            font-size: 24px;
+            font-weight: 400;
+            color: #3c4043;
+            margin-bottom: 16px;
+        }
+        .email-detail-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            background: #ea4335;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+        .sender-info {
+            flex: 1;
+        }
+        .sender-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #3c4043;
+        }
+        .sender-email {
+            font-size: 12px;
+            color: #5f6368;
+        }
+        .email-detail-time {
+            font-size: 12px;
+            color: #5f6368;
+        }
+        .email-detail-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .action-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #ea4335;
+        }
+        .email-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #3c4043;
+            margin-bottom: 30px;
+        }
+        .ticket-box {
+            background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .ticket-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .ticket-event {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        .ticket-id {
+            font-size: 14px;
+            opacity: 0.9;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <!-- Gmail Header -->
+        <div class="gmail-header">
+            <div class="gmail-logo">📧</div>
+            <div class="gmail-title">Gmail</div>
+        </div>
+        
+        <!-- Toolbar -->
+        <div class="gmail-toolbar">
+            <button class="toolbar-btn">📁 Inbox</button>
+            <button class="toolbar-btn">⭐ Starred</button>
+            <button class="toolbar-btn">📤 Sent</button>
+            <button class="toolbar-btn">📝 Drafts</button>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="Search mail">
+                <span class="search-icon">🔍</span>
+            </div>
+            <button class="toolbar-btn primary">⚙️ Settings</button>
+        </div>
+        
+        <div class="gmail-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <button class="compose-btn">
+                    <span>✉️</span>
+                    <span>Compose</span>
+                </button>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">
+                            <span>📥</span>
+                            <span>Inbox</span>
+                            <span class="nav-count">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>⭐</span>
+                            <span>Starred</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>🕐</span>
+                            <span>Snoozed</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>📤</span>
+                            <span>Sent</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>📝</span>
+                            <span>Drafts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>🗑️</span>
+                            <span>Spam</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <span>🗂️</span>
+                            <span>All Mail</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Email List -->
+            <div class="email-list">
+                <!-- New Email - Event Registration -->
+                <div class="email-item unread" onclick="showEmailDetail(1)">
+                    <div class="email-checkbox"></div>
+                    <div class="email-star"></div>
+                    <div class="email-content">
+                        <div class="email-header">
+                            <span class="email-sender">EventSync System</span>
+                            <span class="email-time">9:23 AM</span>
+                        </div>
+                        <div class="email-subject">🎉 Your Event Ticket is Ready! - Tech Summit 2024</div>
+                        <div class="email-preview">Congratulations! Your registration for Tech Summit 2024 has been approved. Your ticket details are below...</div>
+                        <div class="email-tags">
+                            <span class="email-tag tag-important">Important</span>
+                            <span class="email-tag tag-work">Work</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pending Registration -->
+                <div class="email-item unread" onclick="showEmailDetail(2)">
+                    <div class="email-checkbox"></div>
+                    <div class="email-star"></div>
+                    <div class="email-content">
+                        <div class="email-header">
+                            <span class="email-sender">EventSync System</span>
+                            <span class="email-time">9:15 AM</span>
+                        </div>
+                        <div class="email-subject">📝 Registration Received - AI Workshop</div>
+                        <div class="email-preview">Thank you for registering for AI Workshop. Your registration is currently pending approval...</div>
+                        <div class="email-tags">
+                            <span class="email-tag tag-work">Work</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Approved Email -->
+                <div class="email-item" onclick="showEmailDetail(3)">
+                    <div class="email-checkbox"></div>
+                    <div class="email-star starred"></div>
+                    <div class="email-content">
+                        <div class="email-header">
+                            <span class="email-sender">EventSync System</span>
+                            <span class="email-time">8:45 AM</span>
+                        </div>
+                        <div class="email-subject">✅ Registration Confirmed - Web Dev Bootcamp</div>
+                        <div class="email-preview">Your registration has been approved! See your ticket details and event information...</div>
+                        <div class="email-tags">
+                            <span class="email-tag tag-personal">Personal</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Regular Email -->
+                <div class="email-item">
+                    <div class="email-checkbox"></div>
+                    <div class="email-star"></div>
+                    <div class="email-content">
+                        <div class="email-header">
+                            <span class="email-sender">Team Calendar</span>
+                            <span class="email-time">8:30 AM</span>
+                        </div>
+                        <div class="email-subject">Meeting Reminder - Project Sync</div>
+                        <div class="email-preview">Don't forget about today's project sync meeting at 2 PM in Conference Room B...</div>
+                    </div>
+                </div>
+                
+                <!-- Promotion Email -->
+                <div class="email-item">
+                    <div class="email-checkbox"></div>
+                    <div class="email-star"></div>
+                    <div class="email-content">
+                        <div class="email-header">
+                            <span class="email-sender">Tech Newsletter</span>
+                            <span class="email-time">7:45 AM</span>
+                        </div>
+                        <div class="email-subject">🚀 Latest Tech Trends This Week</div>
+                        <div class="email-preview">Discover the newest innovations in AI, cloud computing, and more...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Email Detail View -->
+            <div class="email-detail" id="emailDetail">
+                <div class="email-detail-header">
+                    <h1 class="email-detail-subject">🎉 Your Event Ticket is Ready! - Tech Summit 2024</h1>
+                    <div class="email-detail-meta">
+                        <div class="sender-avatar">ES</div>
+                        <div class="sender-info">
+                            <div class="sender-name">EventSync System</div>
+                            <div class="sender-email">noreply@eventsync.com</div>
+                        </div>
+                        <div class="email-detail-time">Today at 9:23 AM</div>
+                    </div>
+                    <div class="email-detail-actions">
+                        <button class="action-btn">↩️ Reply</button>
+                        <button class="action-btn">↪️ Forward</button>
+                        <button class="action-btn">⭐ Star</button>
+                        <button class="action-btn">🗑️ Delete</button>
+                    </div>
+                </div>
+                
+                <div class="email-body">
+                    <p>Dear John Doe,</p>
+                    <p>Congratulations! Your registration for <strong>Tech Summit 2024</strong> has been approved.</p>
+                    <p>We're excited to have you join us for this amazing event. Please find your ticket details below:</p>
+                    
+                    <div class="ticket-box">
+                        <div class="ticket-icon">🎫</div>
+                        <div class="ticket-event">Tech Summit 2024</div>
+                        <div class="ticket-id">EVT-2404-0001</div>
+                    </div>
+                    
+                    <p><strong>Event Details:</strong></p>
+                    <ul>
+                        <li>Date: April 15, 2024</li>
+                        <li>Time: 9:00 AM - 6:00 PM</li>
+                        <li>Venue: Tech Convention Center</li>
+                        <li>Address: 123 Innovation Drive, Tech City</li>
+                    </ul>
+                    
+                    <p>Please bring this ticket (digital or printed) for check-in. We recommend arriving 30 minutes early.</p>
+                    
+                    <p>If you have any questions, feel free to contact our support team.</p>
+                    
+                    <p>Best regards,<br>The EventSync Team</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showEmailDetail(emailId) {
+            const emailDetail = document.getElementById('emailDetail');
+            emailDetail.classList.add('active');
+            
+            // Remove unread class from clicked email
+            event.currentTarget.classList.remove('unread');
+            
+            // Update email content based on ID
+            const emailData = {
+                1: {
+                    subject: '🎉 Your Event Ticket is Ready! - Tech Summit 2024',
+                    sender: 'EventSync System',
+                    email: 'noreply@eventsync.com',
+                    time: 'Today at 9:23 AM',
+                    body: `
+                        <p>Dear John Doe,</p>
+                        <p>Congratulations! Your registration for <strong>Tech Summit 2024</strong> has been approved.</p>
+                        <p>We're excited to have you join us for this amazing event. Please find your ticket details below:</p>
+                        
+                        <div class="ticket-box">
+                            <div class="ticket-icon">🎫</div>
+                            <div class="ticket-event">Tech Summit 2024</div>
+                            <div class="ticket-id">EVT-2404-0001</div>
+                        </div>
+                        
+                        <p><strong>Event Details:</strong></p>
+                        <ul>
+                            <li>Date: April 15, 2024</li>
+                            <li>Time: 9:00 AM - 6:00 PM</li>
+                            <li>Venue: Tech Convention Center</li>
+                        </ul>
+                        
+                        <p>Please bring this ticket for check-in.</p>
+                        <p>Best regards,<br>The EventSync Team</p>
+                    `
+                },
+                2: {
+                    subject: '📝 Registration Received - AI Workshop',
+                    sender: 'EventSync System',
+                    email: 'noreply@eventsync.com',
+                    time: 'Today at 9:15 AM',
+                    body: `
+                        <p>Dear Sarah Miller,</p>
+                        <p>Thank you for registering for <strong>AI Workshop</strong>.</p>
+                        <p>Your registration has been received and is currently pending approval by our admin team.</p>
+                        <p>You will receive a confirmation email once your registration is approved.</p>
+                        <p>Registration Details:</p>
+                        <ul>
+                            <li>Event: AI Workshop</li>
+                            <li>Date: April 20, 2024</li>
+                            <li>Status: Pending</li>
+                        </ul>
+                        <p>Best regards,<br>The EventSync Team</p>
+                    `
+                },
+                3: {
+                    subject: '✅ Registration Confirmed - Web Dev Bootcamp',
+                    sender: 'EventSync System',
+                    email: 'noreply@eventsync.com',
+                    time: 'Today at 8:45 AM',
+                    body: `
+                        <p>Dear Robert Johnson,</p>
+                        <p>Great news! Your registration for <strong>Web Dev Bootcamp</strong> has been confirmed.</p>
+                        <p>Your ticket ID: EVT-2404-0002</p>
+                        <p>Event Details:</p>
+                        <ul>
+                            <li>Date: April 25, 2024</li>
+                            <li>Time: 10:00 AM - 5:00 PM</li>
+                            <li>Location: Tech Hub, Floor 3</li>
+                        </ul>
+                        <p>We look forward to seeing you there!</p>
+                        <p>Best regards,<br>The EventSync Team</p>
+                    `
+                }
+            };
+            
+            const email = emailData[emailId];
+            if (email) {
+                document.querySelector('.email-detail-subject').textContent = email.subject;
+                document.querySelector('.sender-name').textContent = email.sender;
+                document.querySelector('.sender-email').textContent = email.email;
+                document.querySelector('.email-detail-time').textContent = email.time;
+                document.querySelector('.email-body').innerHTML = email.body;
+            }
+        }
+        
+        // Toggle checkboxes
+        document.querySelectorAll('.email-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('checked');
+            });
+        });
+        
+        // Toggle stars
+        document.querySelectorAll('.email-star').forEach(star => {
+            star.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('starred');
+            });
+        });
+    </script>
+</body>
+</html>

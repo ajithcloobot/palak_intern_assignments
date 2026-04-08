@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSync - User Journey Flowchart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 50px;
+        }
+        .flowchart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .step {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 25px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.25);
+        }
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+        .step-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        .step-desc {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.5;
+        }
+        .arrow {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: 300;
+        }
+        @media (max-width: 900px) {
+            .arrow {
+                transform: rotate(90deg);
+            }
+            .flowchart {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">EventSync - User Journey</h1>
+        <div class="flowchart">
+            <div class="step">
+                <div class="step-icon">📝</div>
+                <div class="step-number">Step 1</div>
+                <div class="step-title">User Registration</div>
+                <div class="step-desc">Fill form with name, email & event</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+                <div class="step-icon">⚡</div>
+                <div class="step-number">Step 2</div>
+                <div class="step-title">Instant Sync</div>
+                <div class="step-desc">Data auto-appears in Google Sheet</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+                <div class="step-icon">👤</div>
+                <div class="step-number">Step 3</div>
+                <div class="step-title">Admin Review</div>
+                <div class="step-desc">One-click approve or reject</div>
+            </div>
+            <div class="arrow">→</div>
+            <div class="step">
+                <div class="step-icon">📧</div>
+                <div class="step-number">Step 4</div>
+                <div class="step-title">Ticket Email</div>
+                <div class="step-desc">User receives ticket instantly</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

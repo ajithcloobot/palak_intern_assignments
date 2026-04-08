@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Flow Engine - Phase 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s; }
+        .bg-circle:nth-child(2) { width: 200px; height: 200px; top: 50%; right: -100px; animation-delay: 5s; }
+        .bg-circle:nth-child(3) { width: 150px; height: 150px; bottom: -75px; left: 30%; animation-delay: 10s; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 33% { transform: translateY(-30px) rotate(120deg); } 66% { transform: translateY(30px) rotate(240deg); } }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideInDown 1s ease;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.2s both;
+            height: fit-content;
+        }
+        .panel-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Product Input */
+        .product-section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .product-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .product-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .product-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        /* Screen Registry */
+        .screen-registry {
+            margin-bottom: 25px;
+        }
+        .screen-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .screen-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .screen-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .screen-icon {
+            font-size: 18px;
+        }
+        .remove-screen {
+            background: rgba(234, 67, 53, 0.2);
+            border: 1px solid rgba(234, 67, 53, 0.3);
+            color: #ea4335;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        /* Universal Flow Engine */
+        .flow-engine {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.4s both;
+            min-height: 600px;
+        }
+        .flow-header {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Universal Flow Display */
+        .universal-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .flow-step {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-product {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .step-screen {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .step-action {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            font-style: italic;
+        }
+        .step-arrow {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 24px;
+            align-self: center;
+            animation: bounce 2s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 20px;
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .empty-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* Animations */
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Universal Flow Engine</h1>
+            <p>Phase 2: Works with ANY product screens and user flows</p>
+            <div style="margin-top: 20px;">
+                <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Home</span>
+                </a>
+                <a href="17-dynamic-video-generator.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Video Generator</span>
+                </a>
+                <a href="15-intelligent-flow-engine.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Intelligent Engine</span>
+                </a>
+                <a href="14-professional-video-demo.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Pro Video Demo</span>
+                </a>
+            </div>
+        </header>
+        
+        <div class="main-layout">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="panel-title">
+                    <span>🚀</span>
+                    <span>Universal Configuration</span>
+                </div>
+                
+                <!-- Product Definition -->
+                <div class="product-section">
+                    <div class="section-title">
+                        <span>🏢</span>
+                        <span>Product Definition</span>
+                    </div>
+                    <input type="text" class="product-input" id="productName" placeholder="Enter product name (e.g., 'E-commerce Platform')">
+                    <input type="text" class="product-input" id="productDescription" placeholder="Enter product description">
+                </div>
+                
+                <!-- Screen Registry -->
+                <div class="screen-registry">
+                    <div class="section-title">
+                        <span>📱</span>
+                        <span>Product Screens</span>
+                    </div>
+                    <div class="screen-list" id="screenList">
+                        <!-- Screens will be added here -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="showAddScreenDialog()">+ Add Screen</button>
+                </div>
+                
+                <!-- User Journey -->
+                <div class="product-section">
+                    <div class="section-title">
+                        <span>🎯</span>
+                        <span>User Journey Steps</span>
+                    </div>
+                    <input type="text" class="product-input" id="journeyInput" placeholder="Enter journey step (e.g., 'User adds to cart')">
+                    <button class="btn btn-secondary" onclick="addJourneyStep()">+ Add Step</button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateUniversalFlow()">🌍 Generate Universal Flow</button>
+                    <button class="btn btn-secondary" onclick="autoDetectFlow()">🤖 Auto-Detect Flow</button>
+                    <button class="btn btn-secondary" onclick="resetUniversal()">🔄 Reset</button>
+                </div>
+            </div>
+            
+            <!-- Flow Visualization -->
+            <div class="flow-engine">
+                <div class="flow-header">
+                    <span>🎯</span>
+                    <span>Universal Flow Visualization</span>
+                </div>
+                
+                <div id="flowDisplay">
+                    <div class="empty-state">
+                        <div class="empty-icon">🌍</div>
+                        <div class="empty-text">Universal Flow Engine Ready</div>
+                        <div class="empty-subtext">Define any product, screens, and user journey to generate adaptive flows</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Universal Flow Engine
+        class UniversalFlowEngine {
+            constructor() {
+                this.product = null;
+                this.screens = [];
+                this.journeySteps = [];
+                this.flows = [];
+            }
+            
+            addScreen(name, type, triggers, icon) {
+                this.screens.push({
+                    id: `screen-${Date.now()}`,
+                    name,
+                    type,
+                    triggers: triggers.map(t => t.toLowerCase()),
+                    icon,
+                    confidence: 0
+                });
+            }
+            
+            addJourneyStep(step) {
+                this.journeySteps.push(step);
+            }
+            
+            analyzeUniversalFlow() {
+                const flow = [];
+                
+                this.journeySteps.forEach((step, index) => {
+                    const stepLower = step.toLowerCase();
+                    let bestMatch = null;
+                    let highestScore = 0;
+                    
+                    // Analyze against all screens
+                    this.screens.forEach(screen => {
+                        const score = screen.triggers.reduce((acc, trigger) => {
+                            return acc + (stepLower.includes(trigger) ? 1 : 0);
+                        }, 0);
+                        
+                        if (score > highestScore) {
+                            highestScore = score;
+                            bestMatch = screen;
+                        }
+                    });
+                    
+                    if (bestMatch) {
+                        bestMatch.confidence = highestScore / bestMatch.triggers.length;
+                        flow.push({
+                            step: index + 1,
+                            action: step,
+                            screen: bestMatch,
+                            confidence: bestMatch.confidence,
+                            reasoning: `Matched triggers: ${bestMatch.triggers.filter(t => stepLower.includes(t)).join(', ')}`
+                        });
+                    }
+                });
+                
+                return flow;
+            }
+            
+            autoDetectFlow() {
+                // Auto-detect common patterns
+                const patterns = {
+                    'ecommerce': {
+                        screens: ['Product Catalog', 'Shopping Cart', 'Checkout', 'Payment', 'Order Confirmation'],
+                        journey: ['Browse products', 'Add to cart', 'View cart', 'Enter payment', 'Complete purchase']
+                    },
+                    'saas': {
+                        screens: ['Landing Page', 'Signup Form', 'Dashboard', 'Settings', 'Billing'],
+                        journey: ['Visit website', 'Create account', 'Access dashboard', 'Configure settings', 'Subscribe']
+                    },
+                    'social': {
+                        screens: ['Feed', 'Profile', 'Messages', 'Notifications', 'Settings'],
+                        journey: ['Scroll feed', 'View profile', 'Send message', 'Check notifications', 'Update settings']
+                    }
+                };
+                
+                // Auto-detect based on product name
+                const productName = (this.product?.name || '').toLowerCase();
+                let detectedPattern = null;
+                
+                for (const [patternName, pattern] of Object.entries(patterns)) {
+                    if (productName.includes(patternName)) {
+                        detectedPattern = pattern;
+                        break;
+                    }
+                }
+                
+                if (detectedPattern) {
+                    // Auto-populate screens and journey
+                    this.screens = [];
+                    this.journeySteps = detectedPattern.journey;
+                    
+                    detectedPattern.screens.forEach((screenName, index) => {
+                        this.addScreen(screenName, 'auto', [], ['📱', '🛒', '💳', '📊', '👤'][index] || '📱');
+                    });
+                    
+                    return this.analyzeUniversalFlow();
+                }
+                
+                return null;
+            }
+        }
+        
+        const universalEngine = new UniversalFlowEngine();
+        
+        function showAddScreenDialog() {
+            const screenName = prompt('Enter screen name:');
+            if (!screenName) return;
+            
+            const screenType = prompt('Enter screen type (e.g., form, dashboard, payment):');
+            const triggers = prompt('Enter triggers (comma-separated):');
+            const icon = prompt('Enter screen icon (emoji):') || '📱';
+            
+            if (screenName && triggers) {
+                universalEngine.addScreen(screenName, screenType || 'custom', triggers.split(','), icon);
+                updateScreenList();
+                showNotification('Screen added!', 'success');
+            }
+        }
+        
+        function updateScreenList() {
+            const screenList = document.getElementById('screenList');
+            screenList.innerHTML = universalEngine.screens.map((screen, index) => `
+                <div class="screen-item">
+                    <div class="screen-info">
+                        <span class="screen-icon">${screen.icon}</span>
+                        <span>${screen.name}</span>
+                    </div>
+                    <button class="remove-screen" onclick="removeScreen(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeScreen(index) {
+            universalEngine.screens.splice(index, 1);
+            updateScreenList();
+        }
+        
+        function addJourneyStep() {
+            const input = document.getElementById('journeyInput');
+            const step = input.value.trim();
+            
+            if (step) {
+                universalEngine.addJourneyStep(step);
+                input.value = '';
+                showNotification('Journey step added!', 'success');
+            }
+        }
+        
+        function generateUniversalFlow() {
+            const productName = document.getElementById('productName').value.trim();
+            const productDescription = document.getElementById('productDescription').value.trim();
+            
+            if (!productName) {
+                showNotification('Please enter product name', 'error');
+                return;
+            }
+            
+            if (universalEngine.screens.length < 2) {
+                showNotification('Please add at least 2 screens', 'error');
+                return;
+            }
+            
+            if (universalEngine.journeySteps.length < 2) {
+                showNotification('Please add at least 2 journey steps', 'error');
+                return;
+            }
+            
+            // Set product info
+            universalEngine.product = { name: productName, description: productDescription };
+            
+            // Generate flow
+            const flow = universalEngine.analyzeUniversalFlow();
+            
+            // Display flow
+            displayUniversalFlow(flow);
+            
+            showNotification('Universal flow generated!', 'success');
+        }
+        
+        function autoDetectFlow() {
+            const productName = document.getElementById('productName').value.trim();
+            
+            if (!productName) {
+                showNotification('Please enter product name first', 'error');
+                return;
+            }
+            
+            universalEngine.product = { name: productName };
+            const flow = universalEngine.autoDetectFlow();
+            
+            if (flow) {
+                updateScreenList();
+                displayUniversalFlow(flow);
+                showNotification('Auto-detected flow pattern!', 'success');
+            } else {
+                showNotification('No pattern detected. Please configure manually.', 'info');
+            }
+        }
+        
+        function displayUniversalFlow(flow) {
+            const flowDisplay = document.getElementById('flowDisplay');
+            
+            let flowHTML = '<div class="universal-flow">';
+            
+            flow.forEach((step, index) => {
+                const confidencePercent = Math.round(step.confidence * 100);
+                
+                flowHTML += `
+                    <div class="flow-step">
+                        <div class="step-number">${step.step}</div>
+                        <div class="step-content">
+                            <div class="step-product">🏢 ${universalEngine.product.name}</div>
+                            <div class="step-screen">${step.screen.icon} ${step.screen.name}</div>
+                            <div class="step-action">🎯 Action: "${step.action}"</div>
+                            <div class="step-action">🤖 Confidence: ${confidencePercent}%</div>
+                            <div class="step-action">💭 ${step.reasoning}</div>
+                        </div>
+                    </div>
+                `;
+                
+                if (index < flow.length - 1) {
+                    flowHTML += '<div class="step-arrow">↓</div>';
+                }
+            });
+            
+            flowHTML += '</div>';
+            
+            // Add video demo link
+            flowHTML += `
+                <div style="margin-top: 30px; text-align: center;">
+                    <a href="14-professional-video-demo.html" class="btn btn-primary" style="display: inline-block; text-decoration: none; margin-bottom: 20px;">
+                        🎬 Watch Professional Video Demo
+                    </a>
+                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 14px; margin-top: 10px;">
+                        🎯 See your custom ${universalEngine.product.name} screens in action!
+                    </div>
+                </div>
+            `;
+            
+            flowDisplay.innerHTML = flowHTML;
+            
+            // Animate steps
+            setTimeout(() => {
+                document.querySelectorAll('.flow-step').forEach((step, index) => {
+                    step.style.animation = `slideInUp 0.5s ease ${index * 0.1}s both`;
+                });
+            }, 100);
+        }
+        
+        function resetUniversal() {
+            universalEngine.product = null;
+            universalEngine.screens = [];
+            universalEngine.journeySteps = [];
+            
+            document.getElementById('productName').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('journeyInput').value = '';
+            
+            updateScreenList();
+            
+            document.getElementById('flowDisplay').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🌍</div>
+                    <div class="empty-text">Universal Flow Engine Reset</div>
+                    <div class="empty-subtext">Ready for any product, screens, and user journey</div>
+                </div>
+            `;
+            
+            showNotification('Universal engine reset!', 'info');
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Handle Enter key in journey input
+        document.getElementById('journeyInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addJourneyStep();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Sheet Mockup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f3f2f1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .mockup-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .excel-header {
+            background: #217346;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .excel-logo {
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #217346;
+        }
+        .excel-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .excel-toolbar {
+            background: #f3f2f1;
+            padding: 8px 20px;
+            border-bottom: 1px solid #d4d4d4;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .toolbar-group {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            padding: 0 10px;
+            border-right: 1px solid #d4d4d4;
+        }
+        .toolbar-group:last-child {
+            border-right: none;
+        }
+        .toolbar-btn {
+            padding: 6px 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 2px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toolbar-btn:hover {
+            background: #e1e1e1;
+            border-color: #d4d4d4;
+        }
+        .toolbar-btn.active {
+            background: #e1e1e1;
+            border-color: #d4d4d4;
+        }
+        .formula-bar {
+            background: white;
+            padding: 8px 20px;
+            border-bottom: 1px solid #d4d4d4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cell-ref {
+            background: #f3f2f1;
+            border: 1px solid #d4d4d4;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 12px;
+            color: #595959;
+            min-width: 60px;
+            text-align: center;
+        }
+        .formula-input {
+            flex: 1;
+            background: #f3f2f1;
+            border: 1px solid #d4d4d4;
+            padding: 4px 8px;
+            border-radius: 2px;
+            font-size: 13px;
+            color: #595959;
+        }
+        .sheet-tabs {
+            background: #f3f2f1;
+            padding: 0 20px;
+            border-bottom: 1px solid #d4d4d4;
+            display: flex;
+            gap: 2px;
+        }
+        .sheet-tab {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            font-size: 12px;
+            color: #595959;
+            cursor: pointer;
+        }
+        .sheet-tab.active {
+            background: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+        .add-tab {
+            padding: 8px 12px;
+            color: #595959;
+            cursor: pointer;
+        }
+        .spreadsheet {
+            background: white;
+            overflow: auto;
+            max-height: 600px;
+        }
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .sheet-table th {
+            background: #f3f2f1;
+            border: 1px solid #d4d4d4;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 400;
+            color: #595959;
+            white-space: nowrap;
+        }
+        .sheet-table td {
+            border: 1px solid #d4d4d4;
+            padding: 8px 12px;
+            color: #595959;
+        }
+        .sheet-table tr:hover {
+            background: #f8f8f8;
+        }
+        .header-cell {
+            background: #d4d4d4 !important;
+            color: #595959 !important;
+            font-weight: 600;
+        }
+        .status-approved {
+            color: #217346;
+            font-weight: 500;
+        }
+        .status-pending {
+            color: #c65402;
+            font-weight: 500;
+        }
+        .new-row {
+            background: #e8f5e9 !important;
+            animation: highlightRow 2s ease;
+        }
+        @keyframes highlightRow {
+            0% { background: #e8f5e9; }
+            100% { background: transparent; }
+        }
+        .row-num {
+            background: #f3f2f1;
+            border: 1px solid #d4d4d4;
+            padding: 8px;
+            text-align: center;
+            color: #595959;
+            font-size: 12px;
+            width: 40px;
+            font-weight: 400;
+        }
+        .status-bar {
+            background: #f3f2f1;
+            padding: 6px 20px;
+            border-top: 1px solid #d4d4d4;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #595959;
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <!-- Excel Header -->
+        <div class="excel-header">
+            <div class="excel-logo">📊</div>
+            <div class="excel-title">Microsoft Excel - EventSync_Registrations.xlsx</div>
+        </div>
+        
+        <!-- Toolbar -->
+        <div class="excel-toolbar">
+            <div class="toolbar-group">
+                <button class="toolbar-btn">📁 File</button>
+                <button class="toolbar-btn">🏠 Home</button>
+                <button class="toolbar-btn">📊 Insert</button>
+                <button class="toolbar-btn">📈 Data</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn">🎨 Format</button>
+                <button class="toolbar-btn">📐 Layout</button>
+                <button class="toolbar-btn">📊 Charts</button>
+            </div>
+            <div class="toolbar-group">
+                <button class="toolbar-btn">💾 Save</button>
+                <button class="toolbar-btn">🔄 Refresh</button>
+            </div>
+        </div>
+        
+        <!-- Formula Bar -->
+        <div class="formula-bar">
+            <div class="cell-ref">A1</div>
+            <div class="formula-input">Timestamp</div>
+        </div>
+        
+        <!-- Sheet Tabs -->
+        <div class="sheet-tabs">
+            <div class="sheet-tab active">Registrations</div>
+            <div class="sheet-tab">Analytics</div>
+            <div class="sheet-tab">Reports</div>
+            <div class="add-tab">+</div>
+        </div>
+        
+        <!-- Spreadsheet Data -->
+        <div class="spreadsheet">
+            <table class="sheet-table">
+                <thead>
+                    <tr>
+                        <th class="row-num"></th>
+                        <th class="header-cell">A</th>
+                        <th class="header-cell">B</th>
+                        <th class="header-cell">C</th>
+                        <th class="header-cell">D</th>
+                        <th class="header-cell">E</th>
+                        <th class="header-cell">F</th>
+                        <th class="header-cell">G</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="row-num">1</td>
+                        <td><strong>Timestamp</strong></td>
+                        <td><strong>Full Name</strong></td>
+                        <td><strong>Email</strong></td>
+                        <td><strong>Event</strong></td>
+                        <td><strong>Status</strong></td>
+                        <td><strong>Ticket ID</strong></td>
+                        <td><strong>Notes</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">2</td>
+                        <td>2024-04-06 09:23:45</td>
+                        <td>John Doe</td>
+                        <td>john.doe@example.com</td>
+                        <td>Tech Summit 2024</td>
+                        <td class="status-pending">Pending</td>
+                        <td>-</td>
+                        <td>New registration</td>
+                    </tr>
+                    <tr class="new-row">
+                        <td class="row-num">3</td>
+                        <td>2024-04-06 09:15:22</td>
+                        <td>Sarah Miller</td>
+                        <td>sarah.m@company.com</td>
+                        <td>AI Workshop</td>
+                        <td class="status-pending">Pending</td>
+                        <td>-</td>
+                        <td>VIP attendee</td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">4</td>
+                        <td>2024-04-06 08:45:10</td>
+                        <td>Robert Johnson</td>
+                        <td>robert.j@tech.io</td>
+                        <td>Web Dev Bootcamp</td>
+                        <td class="status-approved">Approved</td>
+                        <td>EVT-2404-0001</td>
+                        <td>Confirmed</td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">5</td>
+                        <td>2024-04-06 08:30:55</td>
+                        <td>Emily Wilson</td>
+                        <td>emily.w@gmail.com</td>
+                        <td>Cloud Computing Day</td>
+                        <td class="status-approved">Approved</td>
+                        <td>EVT-2404-0002</td>
+                        <td>Speaker</td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">6</td>
+                        <td>2024-04-06 08:12:33</td>
+                        <td>Michael Chen</td>
+                        <td>m.chen@startup.io</td>
+                        <td>Tech Summit 2024</td>
+                        <td class="status-approved">Approved</td>
+                        <td>EVT-2404-0003</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">7</td>
+                        <td>2024-04-06 07:58:15</td>
+                        <td>Lisa Anderson</td>
+                        <td>lisa.a@design.co</td>
+                        <td>AI Workshop</td>
+                        <td class="status-approved">Approved</td>
+                        <td>EVT-2404-0004</td>
+                        <td>Early bird</td>
+                    </tr>
+                    <tr>
+                        <td class="row-num">8</td>
+                        <td>2024-04-06 07:45:42</td>
+                        <td>David Park</td>
+                        <td>david@dev.tech</td>
+                        <td>Web Dev Bootcamp</td>
+                        <td class="status-approved">Approved</td>
+                        <td>EVT-2404-0005</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div>Ready | 7 records found</div>
+            <div>Sheet1 | 100% | Normal View</div>
+        </div>
+    </div>
+</body>
+</html>

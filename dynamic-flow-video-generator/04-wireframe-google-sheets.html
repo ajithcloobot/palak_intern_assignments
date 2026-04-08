@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSync - Google Sheets View Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            padding: 40px;
+        }
+        .showcase {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 40px;
+        }
+        .sheets-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border: 1px solid #dadce0;
+        }
+        /* Google Sheets Header */
+        .sheets-top-bar {
+            background: #f9fbfd;
+            padding: 12px 16px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sheets-logo {
+            width: 32px;
+            height: 32px;
+            background: #34a853;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .doc-title {
+            font-size: 16px;
+            color: #3c4043;
+            font-weight: 500;
+        }
+        .sheets-toolbar {
+            background: #f9fbfd;
+            padding: 8px 16px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #5f6368;
+        }
+        .toolbar-item {
+            cursor: pointer;
+        }
+        .toolbar-item:hover {
+            color: #1a73e8;
+        }
+        /* Formula Bar */
+        .formula-bar {
+            background: white;
+            padding: 8px 16px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cell-ref {
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #5f6368;
+            min-width: 60px;
+            text-align: center;
+        }
+        .formula-input {
+            flex: 1;
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #5f6368;
+        }
+        /* Sheet Tabs */
+        .sheet-tabs {
+            background: #f9fbfd;
+            padding: 0 16px;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            gap: 4px;
+        }
+        .sheet-tab {
+            padding: 8px 20px;
+            background: #e8f0fe;
+            border: 1px solid #dadce0;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            font-size: 13px;
+            color: #1a73e8;
+            cursor: pointer;
+        }
+        .sheet-tab.active {
+            background: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+        .add-tab {
+            padding: 8px 12px;
+            color: #5f6368;
+            cursor: pointer;
+        }
+        /* Spreadsheet Grid */
+        .spreadsheet {
+            background: white;
+            overflow: auto;
+        }
+        .sheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .sheet-table th {
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 500;
+            color: #3c4043;
+            white-space: nowrap;
+        }
+        .sheet-table td {
+            border: 1px solid #dadce0;
+            padding: 8px 12px;
+            color: #3c4043;
+        }
+        .sheet-table tr:hover {
+            background: #f8f9fa;
+        }
+        .header-cell {
+            background: #e8f0fe !important;
+            color: #1a73e8 !important;
+            font-weight: 600;
+        }
+        .status-approved {
+            color: #137333;
+            font-weight: 500;
+        }
+        .status-pending {
+            color: #b06000;
+            font-weight: 500;
+        }
+        .ticket-id {
+            font-family: 'Roboto Mono', monospace;
+            color: #5f6368;
+            font-size: 12px;
+        }
+        /* Row numbers column */
+        .row-num {
+            background: #f8f9fa;
+            border: 1px solid #dadce0;
+            padding: 8px;
+            text-align: center;
+            color: #5f6368;
+            font-size: 12px;
+            width: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="showcase">
+        <h1 class="section-title">Google Sheets Integration - Real-time Data Sync</h1>
+        <div class="sheets-container">
+            <!-- Google Sheets Header -->
+            <div class="sheets-top-bar">
+                <div class="sheets-logo">🟩</div>
+                <span class="doc-title">EventSync_Registrations</span>
+            </div>
+            
+            <!-- Toolbar -->
+            <div class="sheets-toolbar">
+                <span class="toolbar-item">File</span>
+                <span class="toolbar-item">Edit</span>
+                <span class="toolbar-item">View</span>
+                <span class="toolbar-item">Insert</span>
+                <span class="toolbar-item">Format</span>
+                <span class="toolbar-item">Data</span>
+                <span class="toolbar-item">Tools</span>
+                <span class="toolbar-item">Extensions</span>
+                <span class="toolbar-item">Help</span>
+            </div>
+            
+            <!-- Formula Bar -->
+            <div class="formula-bar">
+                <div class="cell-ref">A1</div>
+                <div class="formula-input">Timestamp</div>
+            </div>
+            
+            <!-- Sheet Tabs -->
+            <div class="sheet-tabs">
+                <div class="sheet-tab active">Registrations</div>
+                <div class="sheet-tab">Approved</div>
+                <div class="sheet-tab">Analytics</div>
+                <div class="add-tab">+</div>
+            </div>
+            
+            <!-- Spreadsheet Data -->
+            <div class="spreadsheet">
+                <table class="sheet-table">
+                    <thead>
+                        <tr>
+                            <th class="row-num"></th>
+                            <th class="header-cell">A</th>
+                            <th class="header-cell">B</th>
+                            <th class="header-cell">C</th>
+                            <th class="header-cell">D</th>
+                            <th class="header-cell">E</th>
+                            <th class="header-cell">F</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-num">1</td>
+                            <td><strong>Timestamp</strong></td>
+                            <td><strong>Name</strong></td>
+                            <td><strong>Email</strong></td>
+                            <td><strong>Event</strong></td>
+                            <td><strong>Status</strong></td>
+                            <td><strong>Ticket ID</strong></td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">2</td>
+                            <td>2024-03-15 09:23</td>
+                            <td>John Doe</td>
+                            <td>john.doe@example.com</td>
+                            <td>Tech Summit 2024</td>
+                            <td class="status-pending">Pending</td>
+                            <td class="ticket-id">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">3</td>
+                            <td>2024-03-15 09:15</td>
+                            <td>Sarah Miller</td>
+                            <td>sarah.m@company.com</td>
+                            <td>AI Workshop</td>
+                            <td class="status-pending">Pending</td>
+                            <td class="ticket-id">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">4</td>
+                            <td>2024-03-15 08:45</td>
+                            <td>Robert Johnson</td>
+                            <td>robert.j@tech.io</td>
+                            <td>Web Dev Bootcamp</td>
+                            <td class="status-approved">Approved</td>
+                            <td class="ticket-id">EVT-2403-7842</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">5</td>
+                            <td>2024-03-15 08:30</td>
+                            <td>Emily Wilson</td>
+                            <td>emily.w@gmail.com</td>
+                            <td>Cloud Computing Day</td>
+                            <td class="status-approved">Approved</td>
+                            <td class="ticket-id">EVT-2403-7841</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">6</td>
+                            <td>2024-03-15 08:12</td>
+                            <td>Michael Chen</td>
+                            <td>m.chen@startup.io</td>
+                            <td>Tech Summit 2024</td>
+                            <td class="status-pending">Pending</td>
+                            <td class="ticket-id">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">7</td>
+                            <td>2024-03-15 07:58</td>
+                            <td>Lisa Anderson</td>
+                            <td>lisa.a@design.co</td>
+                            <td>AI Workshop</td>
+                            <td class="status-approved">Approved</td>
+                            <td class="ticket-id">EVT-2403-7840</td>
+                        </tr>
+                        <tr>
+                            <td class="row-num">8</td>
+                            <td>2024-03-15 07:45</td>
+                            <td>David Park</td>
+                            <td>david@dev.tech</td>
+                            <td>Web Dev Bootcamp</td>
+                            <td class="status-approved">Approved</td>
+                            <td class="ticket-id">EVT-2403-7839</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSync - Complete Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            z-index: 1000;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: #667eea;
+        }
+        
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 100px 40px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .section:nth-child(even) {
+            background: white;
+        }
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            flex-direction: column;
+        }
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        .hero p {
+            font-size: 20px;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        /* Flowchart Section */
+        .flowchart-container {
+            max-width: 1200px;
+            width: 100%;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 50px;
+        }
+        .flowchart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .step {
+            background: white;
+            border-radius: 16px;
+            padding: 30px 25px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+        }
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+        }
+        .step-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 10px;
+        }
+        .step-desc {
+            font-size: 14px;
+            color: #718096;
+        }
+        .arrow {
+            font-size: 36px;
+            color: #667eea;
+        }
+        
+        /* Wireframes Section */
+        .wireframe-showcase {
+            max-width: 1100px;
+            width: 100%;
+        }
+        .wireframe-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .wireframe-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .wireframe-card h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px 24px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .wireframe-preview {
+            padding: 20px;
+            min-height: 200px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .mini-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 280px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .mini-input {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+        .mini-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            width: 100%;
+        }
+        .mini-list {
+            width: 100%;
+        }
+        .mini-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .mini-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .mini-info {
+            flex: 1;
+        }
+        .mini-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+        .mini-status {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        .mini-status.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .mini-status.approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        /* Benefits Section */
+        .benefits-container {
+            max-width: 1100px;
+            width: 100%;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        .section-subtitle {
+            font-size: 18px;
+            color: #718096;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        .benefit-card {
+            background: white;
+            border-radius: 16px;
+            padding: 35px 28px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 22px;
+            font-size: 32px;
+        }
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 12px;
+        }
+        .benefit-desc {
+            font-size: 14px;
+            color: #718096;
+        }
+        
+        /* Tech Stack */
+        .stack-container {
+            max-width: 900px;
+            width: 100%;
+        }
+        .stack-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .stack-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .stack-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .stack-content {
+            flex: 1;
+        }
+        .stack-category {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stack-tech {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+        
+        @media (max-width: 900px) {
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .wireframe-grid {
+                grid-template-columns: 1fr;
+            }
+            .flowchart {
+                flex-direction: column;
+            }
+            .arrow {
+                transform: rotate(90deg);
+            }
+            .nav-links {
+                display: none;
+            }
+        }
+        @media (max-width: 600px) {
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-logo">⚡ EventSync</div>
+        <div class="nav-links">
+            <a href="#flowchart">Journey</a>
+            <a href="#wireframes">Wireframes</a>
+            <a href="#benefits">Benefits</a>
+            <a href="#stack">Tech Stack</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="section hero">
+        <h1>EventSync</h1>
+        <p>Real-time Event Registration Management System<br>Seamlessly syncs with Google Sheets & automates ticket emails</p>
+    </section>
+    
+    <!-- User Journey Flowchart -->
+    <section class="section" id="flowchart">
+        <div class="flowchart-container">
+            <h2 class="section-title">User Journey Flow</h2>
+            <div class="flowchart">
+                <div class="step">
+                    <div class="step-icon">📝</div>
+                    <div class="step-number">Step 1</div>
+                    <div class="step-title">User Registration</div>
+                    <div class="step-desc">Fill form with name, email & event</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="step">
+                    <div class="step-icon">⚡</div>
+                    <div class="step-number">Step 2</div>
+                    <div class="step-title">Instant Sync</div>
+                    <div class="step-desc">Data auto-appears in Google Sheet</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="step">
+                    <div class="step-icon">👤</div>
+                    <div class="step-number">Step 3</div>
+                    <div class="step-title">Admin Review</div>
+                    <div class="step-desc">One-click approve or reject</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="step">
+                    <div class="step-icon">📧</div>
+                    <div class="step-number">Step 4</div>
+                    <div class="step-title">Ticket Email</div>
+                    <div class="step-desc">User receives ticket instantly</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Wireframes -->
+    <section class="section" id="wireframes" style="background: white;">
+        <div class="wireframe-showcase">
+            <h2 class="section-title">Wireframe Screens</h2>
+            <div class="wireframe-grid">
+                <div class="wireframe-card">
+                    <h3>📝 Registration Form</h3>
+                    <div class="wireframe-preview">
+                        <div class="mini-form">
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <div style="font-size: 14px; font-weight: 600; color: #667eea; margin-bottom: 4px;">Event Registration</div>
+                                <div style="font-size: 11px; color: #a0aec0;">Join our upcoming events</div>
+                            </div>
+                            <div class="mini-input">Full Name</div>
+                            <div class="mini-input">Email Address</div>
+                            <div class="mini-input">Select Event ▼</div>
+                            <button class="mini-btn">Register Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="wireframe-card">
+                    <h3>👤 Admin Dashboard</h3>
+                    <div class="wireframe-preview">
+                        <div class="mini-list">
+                            <div class="mini-item">
+                                <div class="mini-avatar">JD</div>
+                                <div class="mini-info">
+                                    <div class="mini-name">John Doe</div>
+                                </div>
+                                <span class="mini-status pending">Pending</span>
+                            </div>
+                            <div class="mini-item">
+                                <div class="mini-avatar">SM</div>
+                                <div class="mini-info">
+                                    <div class="mini-name">Sarah Miller</div>
+                                </div>
+                                <span class="mini-status pending">Pending</span>
+                            </div>
+                            <div class="mini-item">
+                                <div class="mini-avatar">RJ</div>
+                                <div class="mini-info">
+                                    <div class="mini-name">Robert Johnson</div>
+                                </div>
+                                <span class="mini-status approved">Approved</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wireframe-card">
+                    <h3>🗄️ Google Sheets View</h3>
+                    <div class="wireframe-preview">
+                        <div style="background: white; border-radius: 8px; overflow: hidden; width: 100%; max-width: 320px; border: 1px solid #e2e8f0;">
+                            <div style="background: #34a853; color: white; padding: 8px 12px; font-size: 12px; font-weight: 500;">📊 EventSync_Registrations</div>
+                            <div style="padding: 10px;">
+                                <table style="width: 100%; font-size: 11px; border-collapse: collapse;">
+                                    <tr style="background: #f8fafc;">
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; font-weight: 600;">Name</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; font-weight: 600;">Event</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; font-weight: 600;">Status</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">John Doe</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">Tech Summit</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; color: #d97706;">Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">Sarah M.</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">AI Workshop</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; color: #d97706;">Pending</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">Robert J.</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0;">Web Dev</td>
+                                        <td style="padding: 6px; border: 1px solid #e2e8f0; color: #059669;">Approved</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wireframe-card">
+                    <h3>📧 Email Ticket</h3>
+                    <div class="wireframe-preview">
+                        <div style="background: white; border-radius: 8px; padding: 20px; width: 100%; max-width: 280px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">
+                            <div style="text-align: center; margin-bottom: 15px;">
+                                <div style="font-size: 28px; margin-bottom: 8px;">🎉</div>
+                                <div style="font-size: 14px; font-weight: 700; color: #1a202c;">Your Ticket is Ready!</div>
+                            </div>
+                            <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin-bottom: 12px;">
+                                <div style="font-size: 12px; color: #718096; margin-bottom: 4px;">Event</div>
+                                <div style="font-size: 14px; font-weight: 600; color: #1a202c;">Tech Summit 2024</div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 8px; margin-bottom: 4px;">Ticket ID</div>
+                                <div style="font-size: 13px; font-weight: 600; color: #667eea; font-family: monospace;">EVT-2403-7842</div>
+                            </div>
+                            <button style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; padding: 10px; font-size: 12px; font-weight: 600;">Download Ticket</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Benefits Section -->
+    <section class="section" id="benefits">
+        <div class="benefits-container">
+            <div class="section-header">
+                <div class="section-label">Why Choose EventSync</div>
+                <h2 class="section-title">Powerful Features</h2>
+                <p class="section-subtitle">Streamline your event registration process with our comprehensive solution</p>
+            </div>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">⚡</div>
+                    <h3 class="benefit-title">Real-time Sync</h3>
+                    <p class="benefit-desc">Data appears instantly in Google Sheets without manual entry</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📧</div>
+                    <h3 class="benefit-title">Auto Emails</h3>
+                    <p class="benefit-desc">Users get tickets automatically when admin approves</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">📱</div>
+                    <h3 class="benefit-title">Mobile-Ready</h3>
+                    <p class="benefit-desc">Works perfectly on phones for on-site check-ins</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">🔐</div>
+                    <h3 class="benefit-title">Secure & Simple</h3>
+                    <p class="benefit-desc">Easy setup using Google Apps Script, no complex API keys</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Tech Stack -->
+    <section class="section" id="stack" style="background: white;">
+        <div class="stack-container">
+            <div class="section-header">
+                <div class="section-label">Built With Modern Tech</div>
+                <h2 class="section-title">Technology Stack</h2>
+            </div>
+            <div class="stack-list">
+                <div class="stack-item">
+                    <div class="stack-icon">🎨</div>
+                    <div class="stack-content">
+                        <div class="stack-category">Frontend</div>
+                        <div class="stack-tech">HTML5 + CSS3 + JavaScript</div>
+                    </div>
+                </div>
+                <div class="stack-item">
+                    <div class="stack-icon">⚙️</div>
+                    <div class="stack-content">
+                        <div class="stack-category">Backend</div>
+                        <div class="stack-tech">Node.js + Express</div>
+                    </div>
+                </div>
+                <div class="stack-item">
+                    <div class="stack-icon">🗄️</div>
+                    <div class="stack-content">
+                        <div class="stack-category">Database</div>
+                        <div class="stack-tech">JSON (local) + Google Sheets (cloud)</div>
+                    </div>
+                </div>
+                <div class="stack-item">
+                    <div class="stack-icon">📧</div>
+                    <div class="stack-content">
+                        <div class="stack-category">Email</div>
+                        <div class="stack-tech">Nodemailer + Gmail SMTP</div>
+                    </div>
+                </div>
+                <div class="stack-item">
+                    <div class="stack-icon">🔄</div>
+                    <div class="stack-content">
+                        <div class="stack-category">Sync</div>
+                        <div class="stack-tech">Google Apps Script Webhooks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

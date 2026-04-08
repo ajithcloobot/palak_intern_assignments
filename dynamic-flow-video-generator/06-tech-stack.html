@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSync - Technology Stack</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 60px 40px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .section-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+        .stack-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .stack-item {
+            background: white;
+            border-radius: 12px;
+            padding: 24px 30px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stack-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+        }
+        .stack-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .stack-content {
+            flex: 1;
+        }
+        .stack-category {
+            font-size: 13px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .stack-tech {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a202c;
+        }
+        .stack-desc {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 4px;
+        }
+        @media (max-width: 600px) {
+            .stack-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="section-header">
+            <div class="section-label">Built With Modern Tech</div>
+            <h2 class="section-title">Technology Stack</h2>
+        </div>
+        <div class="stack-container">
+            <div class="stack-item">
+                <div class="stack-icon">🎨</div>
+                <div class="stack-content">
+                    <div class="stack-category">Frontend</div>
+                    <div class="stack-tech">HTML5 + CSS3 + JavaScript</div>
+                    <div class="stack-desc">Modern responsive design with vanilla JS for maximum performance</div>
+                </div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-icon">⚙️</div>
+                <div class="stack-content">
+                    <div class="stack-category">Backend</div>
+                    <div class="stack-tech">Node.js + Express</div>
+                    <div class="stack-desc">Lightweight server handling form submissions and API routing</div>
+                </div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-icon">🗄️</div>
+                <div class="stack-content">
+                    <div class="stack-category">Database</div>
+                    <div class="stack-tech">JSON (local) + Google Sheets (cloud)</div>
+                    <div class="stack-desc">Dual storage: local cache for speed, Sheets for accessibility</div>
+                </div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-icon">📧</div>
+                <div class="stack-content">
+                    <div class="stack-category">Email</div>
+                    <div class="stack-tech">Nodemailer + Gmail SMTP</div>
+                    <div class="stack-desc">Reliable email delivery for automated ticket notifications</div>
+                </div>
+            </div>
+            <div class="stack-item">
+                <div class="stack-icon">🔄</div>
+                <div class="stack-content">
+                    <div class="stack-category">Sync</div>
+                    <div class="stack-tech">Google Apps Script Webhooks</div>
+                    <div class="stack-desc">Seamless integration with Google Workspace for real-time updates</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Screen Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .mockups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .mockup-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+        .mockup-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .mockup-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        .mockup-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+        }
+        .mockup-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .mockup-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .mockup-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Product Screen Mockups</h1>
+            <p>Authentic screen designs for Google Forms, Excel Sheet, and Gmail</p>
+        </div>
+        
+        <div class="mockups-grid">
+            <!-- Google Forms -->
+            <div class="mockup-card">
+                <div class="mockup-icon">📝</div>
+                <h3 class="mockup-title">Google Forms</h3>
+                <p class="mockup-description">
+                    Complete Google Forms interface with form builder, question editor, 
+                    multiple choice options, and form settings. Perfect for showing 
+                    registration form creation and user input workflows.
+                </p>
+                <a href="10-google-forms-mockup.html" class="mockup-link">
+                    <span>View Forms</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <!-- Excel Sheet -->
+            <div class="mockup-card">
+                <div class="mockup-icon">📊</div>
+                <h3 class="mockup-title">Excel Sheet</h3>
+                <p class="mockup-description">
+                    Authentic Microsoft Excel interface with spreadsheet grid, 
+                    formula bar, toolbar, and data visualization. Shows real-time 
+                    data sync and registration management.
+                </p>
+                <a href="11-excel-sheet-mockup.html" class="mockup-link">
+                    <span>View Excel</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <!-- Gmail -->
+            <div class="mockup-card">
+                <div class="mockup-icon">📧</div>
+                <h3 class="mockup-title">Gmail</h3>
+                <p class="mockup-description">
+                    Full Gmail interface with inbox, email list, compose button, 
+                    and ticket email templates. Shows automated email delivery 
+                    and user notification workflows.
+                </p>
+                <a href="12-gmail-mockup.html" class="mockup-link">
+                    <span>View Gmail</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

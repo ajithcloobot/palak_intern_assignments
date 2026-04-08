@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Video Generator - Auto Screens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s; }
+        .bg-circle:nth-child(2) { width: 200px; height: 200px; top: 50%; right: -100px; animation-delay: 5s; }
+        .bg-circle:nth-child(3) { width: 150px; height: 150px; bottom: -75px; left: 30%; animation-delay: 10s; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 33% { transform: translateY(-30px) rotate(120deg); } 66% { transform: translateY(30px) rotate(240deg); } }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideInDown 1s ease;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.2s both;
+            height: fit-content;
+        }
+        .panel-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Product Input */
+        .product-section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .product-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .product-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .product-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+        
+        /* Screen Registry */
+        .screen-registry {
+            margin-bottom: 25px;
+        }
+        .screen-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        .screen-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .screen-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .screen-icon {
+            font-size: 18px;
+        }
+        .remove-screen {
+            background: rgba(234, 67, 53, 0.2);
+            border: 1px solid rgba(234, 67, 53, 0.3);
+            color: #ea4335;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        /* Video Generator */
+        .video-generator {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.4s both;
+            min-height: 600px;
+        }
+        .video-header {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Dynamic Video Display */
+        .dynamic-video {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .video-player {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .video-screen {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Generated Screens */
+        .generated-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .generated-screen.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Auto-Generated Screen Styles */
+        .auto-form {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .auto-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px 12px 0 0;
+            margin: -30px -30px 20px -30px;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .auto-field {
+            margin-bottom: 20px;
+        }
+        .auto-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .auto-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .auto-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .auto-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .auto-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .auto-dashboard {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .auto-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .auto-table {
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .auto-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .auto-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .auto-payment {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .payment-method {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .payment-method:hover, .payment-method.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .payment-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .payment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .auto-receipt {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .receipt-header {
+            border-bottom: 2px dashed #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .receipt-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .receipt-items {
+            margin-bottom: 20px;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .receipt-total {
+            border-top: 2px solid #e0e0e0;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Video Controls */
+        .video-controls {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .time-display {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 20px;
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .empty-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* Animations */
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .video-screen { height: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>Dynamic Video Generator</h1>
+            <p>Auto-generate screens and create professional videos for ANY product</p>
+            <div style="margin-top: 20px;">
+                <a href="index.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Home</span>
+                </a>
+                <a href="16-universal-flow-engine.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Universal Engine</span>
+                </a>
+                <a href="15-intelligent-flow-engine.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Intelligent Engine</span>
+                </a>
+                <a href="14-professional-video-demo.html" style="color: white; text-decoration: none; margin: 0 15px; padding: 8px 16px; background: rgba(255,255,255,0.2); border-radius: 8px; display: inline-block;">
+                    <span>Pro Video Demo</span>
+                </a>
+            </div>
+        </header>
+        
+        <div class="main-layout">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="panel-title">
+                    <span>🎬</span>
+                    <span>Video Configuration</span>
+                </div>
+                
+                <!-- Product Definition -->
+                <div class="product-section">
+                    <div class="section-title">
+                        <span>🏢</span>
+                        <span>Product Definition</span>
+                    </div>
+                    <input type="text" class="product-input" id="productName" placeholder="Enter product name (e.g., 'Vending Machine')">
+                    <input type="text" class="product-input" id="productDescription" placeholder="Enter product description">
+                </div>
+                
+                <!-- Screen Registry -->
+                <div class="screen-registry">
+                    <div class="section-title">
+                        <span>📱</span>
+                        <span>Product Screens</span>
+                    </div>
+                    <div class="screen-list" id="screenList">
+                        <!-- Screens will be added here -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="showAddScreenDialog()">+ Add Screen</button>
+                </div>
+                
+                <!-- User Journey -->
+                <div class="product-section">
+                    <div class="section-title">
+                        <span>🎯</span>
+                        <span>User Journey Steps</span>
+                    </div>
+                    <input type="text" class="product-input" id="journeyInput" placeholder="Enter journey step (e.g., 'User selects product')">
+                    <button class="btn btn-secondary" onclick="addJourneyStep()">+ Add Step</button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateDynamicVideo()">🎬 Generate Dynamic Video</button>
+                    <button class="btn btn-secondary" onclick="autoGenerateScreens()">🤖 Auto-Generate Screens</button>
+                    <button class="btn btn-secondary" onclick="resetVideo()">🔄 Reset</button>
+                </div>
+            </div>
+            
+            <!-- Video Generator -->
+            <div class="video-generator">
+                <div class="video-header">
+                    <span>🎥</span>
+                    <span>Dynamic Video Preview</span>
+                </div>
+                
+                <div id="videoDisplay">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎬</div>
+                        <div class="empty-text">Dynamic Video Generator Ready</div>
+                        <div class="empty-subtext">Define product, screens, and journey to generate auto-created video screens</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dynamic Video Generator
+        class DynamicVideoGenerator {
+            constructor() {
+                this.product = null;
+                this.screens = [];
+                this.journeySteps = [];
+                this.generatedScreens = [];
+                this.currentVideoStep = 0;
+                this.isPlaying = false;
+            }
+            
+            addScreen(name, type, triggers, icon) {
+                this.screens.push({
+                    id: `screen-${Date.now()}`,
+                    name,
+                    type,
+                    triggers: triggers.map(t => t.toLowerCase()),
+                    icon,
+                    confidence: 0
+                });
+            }
+            
+            addJourneyStep(step) {
+                this.journeySteps.push(step);
+            }
+            
+            autoGenerateScreens() {
+                const productName = (this.product?.name || '').toLowerCase();
+                
+                // Auto-detect product type and generate screens
+                if (productName.includes('vending') || productName.includes('machine')) {
+                    this.generateVendingMachineScreens();
+                } else if (productName.includes('ecommerce') || productName.includes('shop')) {
+                    this.generateEcommerceScreens();
+                } else if (productName.includes('restaurant') || productName.includes('food')) {
+                    this.generateRestaurantScreens();
+                } else if (productName.includes('saas') || productName.includes('app')) {
+                    this.generateSaaSScreens();
+                } else {
+                    this.generateGenericScreens();
+                }
+                
+                return this.screens;
+            }
+            
+            generateVendingMachineScreens() {
+                this.screens = [
+                    { id: 'screen-1', name: 'Product Selection', type: 'selection', triggers: ['select', 'product', 'choose'], icon: '🥤' },
+                    { id: 'screen-2', name: 'Payment Terminal', type: 'payment', triggers: ['pay', 'card', 'cash'], icon: '💳' },
+                    { id: 'screen-3', name: 'Dispensing', type: 'dispense', triggers: ['dispense', 'drop', 'collect'], icon: '🤖' },
+                    { id: 'screen-4', name: 'Receipt', type: 'receipt', triggers: ['receipt', 'confirm', 'complete'], icon: '🧾' }
+                ];
+                
+                this.journeySteps = [
+                    'User selects soda from machine',
+                    'User inserts credit card',
+                    'Machine processes payment',
+                    'Product dispenses to slot',
+                    'Receipt prints out'
+                ];
+            }
+            
+            generateEcommerceScreens() {
+                this.screens = [
+                    { id: 'screen-1', name: 'Product Catalog', type: 'catalog', triggers: ['product', 'browse', 'shop'], icon: '🛍️' },
+                    { id: 'screen-2', name: 'Shopping Cart', type: 'cart', triggers: ['cart', 'add', 'remove'], icon: '🛒' },
+                    { id: 'screen-3', name: 'Checkout', type: 'checkout', triggers: ['checkout', 'address', 'shipping'], icon: '📦' },
+                    { id: 'screen-4', name: 'Payment', type: 'payment', triggers: ['payment', 'card', 'billing'], icon: '💳' },
+                    { id: 'screen-5', name: 'Order Confirmation', type: 'confirmation', triggers: ['confirm', 'complete', 'success'], icon: '✅' }
+                ];
+                
+                this.journeySteps = [
+                    'User browses products',
+                    'User adds item to cart',
+                    'User enters shipping address',
+                    'User makes payment',
+                    'Order confirmed'
+                ];
+            }
+            
+            generateRestaurantScreens() {
+                this.screens = [
+                    { id: 'screen-1', name: 'Menu', type: 'menu', triggers: ['menu', 'order', 'food'], icon: '📋' },
+                    { id: 'screen-2', name: 'Order', type: 'order', triggers: ['order', 'add', 'cart'], icon: '🛒' },
+                    { id: 'screen-3', name: 'Kitchen', type: 'kitchen', triggers: ['kitchen', 'cook', 'prepare'], icon: '👨‍🍳' },
+                    { id: 'screen-4', name: 'Payment', type: 'payment', triggers: ['pay', 'bill', 'checkout'], icon: '💳' },
+                    { id: 'screen-5', name: 'Table Service', type: 'service', triggers: ['table', 'serve', 'deliver'], icon: '🍽️' }
+                ];
+                
+                this.journeySteps = [
+                    'Customer views menu',
+                    'Customer orders pasta',
+                    'Kitchen prepares food',
+                    'Customer pays bill',
+                    'Waiter serves to table'
+                ];
+            }
+            
+            generateSaaSScreens() {
+                this.screens = [
+                    { id: 'screen-1', name: 'Landing Page', type: 'landing', triggers: ['landing', 'home', 'visit'], icon: '🏠' },
+                    { id: 'screen-2', name: 'Signup Form', type: 'signup', triggers: ['signup', 'register', 'create'], icon: '📝' },
+                    { id: 'screen-3', name: 'Dashboard', type: 'dashboard', triggers: ['dashboard', 'analytics', 'metrics'], icon: '📊' },
+                    { id: 'screen-4', name: 'Settings', type: 'settings', triggers: ['settings', 'config', 'preferences'], icon: '⚙️' },
+                    { id: 'screen-5', name: 'Billing', type: 'billing', triggers: ['billing', 'payment', 'subscription'], icon: '💳' }
+                ];
+                
+                this.journeySteps = [
+                    'User visits website',
+                    'User creates account',
+                    'User accesses dashboard',
+                    'User configures settings',
+                    'User subscribes to plan'
+                ];
+            }
+            
+            generateGenericScreens() {
+                this.screens = [
+                    { id: 'screen-1', name: 'Welcome Screen', type: 'welcome', triggers: ['welcome', 'start', 'begin'], icon: '👋' },
+                    { id: 'screen-2', name: 'Main Interface', type: 'main', triggers: ['main', 'interface', 'home'], icon: '🏠' },
+                    { id: 'screen-3', name: 'Action Screen', type: 'action', triggers: ['action', 'process', 'execute'], icon: '⚡' },
+                    { id: 'screen-4', name: 'Completion', type: 'completion', triggers: ['complete', 'finish', 'done'], icon: '✅' }
+                ];
+                
+                this.journeySteps = [
+                    'User starts journey',
+                    'User navigates to main interface',
+                    'User performs action',
+                    'Process completes successfully'
+                ];
+            }
+            
+            generateScreenHTML(screen, journeyStep) {
+                let html = '';
+                
+                switch(screen.type) {
+                    case 'selection':
+                    case 'menu':
+                        html = this.generateSelectionScreen(screen, journeyStep);
+                        break;
+                    case 'payment':
+                        html = this.generatePaymentScreen(screen, journeyStep);
+                        break;
+                    case 'dashboard':
+                        html = this.generateDashboardScreen(screen, journeyStep);
+                        break;
+                    case 'receipt':
+                    case 'confirmation':
+                        html = this.generateReceiptScreen(screen, journeyStep);
+                        break;
+                    case 'dispense':
+                    case 'kitchen':
+                        html = this.generateProcessScreen(screen, journeyStep);
+                        break;
+                    default:
+                        html = this.generateGenericScreen(screen, journeyStep);
+                }
+                
+                return html;
+            }
+            
+            generateSelectionScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-form">
+                        <div class="auto-header">
+                            <span>${screen.icon}</span>
+                            <span>${screen.name}</span>
+                        </div>
+                        <div class="auto-field">
+                            <div class="auto-label">Available Options</div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div style="border: 2px solid #667eea; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">🥤</div>
+                                    <div style="font-weight: 600;">Soda</div>
+                                    <div style="color: #667eea; font-size: 18px; font-weight: 700;">$2.50</div>
+                                </div>
+                                <div style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">🍫</div>
+                                    <div style="font-weight: 600;">Chocolate</div>
+                                    <div style="color: #666; font-size: 18px;">$1.50</div>
+                                </div>
+                                <div style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">🥨</div>
+                                    <div style="font-weight: 600;">Chips</div>
+                                    <div style="color: #666; font-size: 18px;">$1.00</div>
+                                </div>
+                                <div style="border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;">
+                                    <div style="font-size: 32px; margin-bottom: 10px;">💧</div>
+                                    <div style="font-weight: 600;">Water</div>
+                                    <div style="color: #666; font-size: 18px;">$1.00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="auto-button">Select Item</button>
+                    </div>
+                `;
+            }
+            
+            generatePaymentScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-payment">
+                        <div class="auto-header">
+                            <span>${screen.icon}</span>
+                            <span>${screen.name}</span>
+                        </div>
+                        <div class="payment-methods">
+                            <div class="payment-method selected">
+                                <div class="payment-icon">💳</div>
+                                <div class="payment-name">Credit Card</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">📱</div>
+                                <div class="payment-name">Mobile Pay</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">💵</div>
+                                <div class="payment-name">Cash</div>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-icon">🪙</div>
+                                <div class="payment-name">Coins</div>
+                            </div>
+                        </div>
+                        <div class="auto-field">
+                            <div class="auto-label">Card Number</div>
+                            <input type="text" class="auto-input" value="•••• •••• •••• 1234" readonly>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="auto-field">
+                                <div class="auto-label">Expiry</div>
+                                <input type="text" class="auto-input" value="12/25" readonly>
+                            </div>
+                            <div class="auto-field">
+                                <div class="auto-label">CVV</div>
+                                <input type="text" class="auto-input" value="•••" readonly>
+                            </div>
+                        </div>
+                        <button class="auto-button">Process Payment</button>
+                    </div>
+                `;
+            }
+            
+            generateDashboardScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-dashboard">
+                        <div class="auto-header">
+                            <span>${screen.icon}</span>
+                            <span>${screen.name}</span>
+                        </div>
+                        <div class="auto-stats">
+                            <div class="stat-card">
+                                <div class="stat-number">24</div>
+                                <div class="stat-label">Items Sold</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">$156</div>
+                                <div class="stat-label">Revenue</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">89%</div>
+                                <div class="stat-label">Stock Level</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-number">4.8</div>
+                                <div class="stat-label">Rating</div>
+                            </div>
+                        </div>
+                        <div class="auto-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Stock</th>
+                                        <th>Price</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>🥤 Soda</td>
+                                        <td>45</td>
+                                        <td>$2.50</td>
+                                        <td style="color: #48bb78;">In Stock</td>
+                                    </tr>
+                                    <tr>
+                                        <td>🍫 Chocolate</td>
+                                        <td>12</td>
+                                        <td>$1.50</td>
+                                        <td style="color: #ed8936;">Low Stock</td>
+                                    </tr>
+                                    <tr>
+                                        <td>🥨 Chips</td>
+                                        <td>67</td>
+                                        <td>$1.00</td>
+                                        <td style="color: #48bb78;">In Stock</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            generateReceiptScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-receipt">
+                        <div class="receipt-header">
+                            <div class="receipt-title">🧾 Receipt</div>
+                            <div style="color: #666; font-size: 14px;">Thank you for your purchase!</div>
+                        </div>
+                        <div class="receipt-items">
+                            <div class="receipt-item">
+                                <span>🥤 Soda x1</span>
+                                <span>$2.50</span>
+                            </div>
+                            <div class="receipt-item">
+                                <span>Subtotal</span>
+                                <span>$2.50</span>
+                            </div>
+                            <div class="receipt-item">
+                                <span>Tax (8%)</span>
+                                <span>$0.20</span>
+                            </div>
+                        </div>
+                        <div class="receipt-total">
+                            Total: $2.70
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #e0e0e0;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 10px;">Order #VM-2024-0420</div>
+                            <div style="font-size: 12px; color: #666;">Date: ${new Date().toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            generateProcessScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-dashboard">
+                        <div class="auto-header">
+                            <span>${screen.icon}</span>
+                            <span>${screen.name}</span>
+                        </div>
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 64px; margin-bottom: 20px; animation: bounce 2s ease infinite;">${screen.icon}</div>
+                            <div style="font-size: 24px; font-weight: 600; color: #333; margin-bottom: 10px;">
+                                Processing...
+                            </div>
+                            <div style="font-size: 16px; color: #666;">
+                                ${journeyStep}
+                            </div>
+                            <div style="margin-top: 30px;">
+                                <div style="width: 200px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto;">
+                                    <div style="width: 60%; height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); border-radius: 2px; animation: pulse 2s ease infinite;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            generateGenericScreen(screen, journeyStep) {
+                return `
+                    <div class="auto-form">
+                        <div class="auto-header">
+                            <span>${screen.icon}</span>
+                            <span>${screen.name}</span>
+                        </div>
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">${screen.icon}</div>
+                            <div style="font-size: 18px; font-weight: 600; color: #333; margin-bottom: 10px;">
+                                ${screen.name}
+                            </div>
+                            <div style="font-size: 14px; color: #666;">
+                                ${journeyStep}
+                            </div>
+                            <button class="auto-button" style="margin-top: 20px;">Continue</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        const videoGenerator = new DynamicVideoGenerator();
+        
+        function showAddScreenDialog() {
+            const screenName = prompt('Enter screen name:');
+            if (!screenName) return;
+            
+            const screenType = prompt('Enter screen type (e.g., form, dashboard, payment):');
+            const triggers = prompt('Enter triggers (comma-separated):');
+            const icon = prompt('Enter screen icon (emoji):') || '📱';
+            
+            if (screenName && triggers) {
+                videoGenerator.addScreen(screenName, screenType || 'custom', triggers.split(','), icon);
+                updateScreenList();
+                showNotification('Screen added!', 'success');
+            }
+        }
+        
+        function updateScreenList() {
+            const screenList = document.getElementById('screenList');
+            screenList.innerHTML = videoGenerator.screens.map((screen, index) => `
+                <div class="screen-item">
+                    <div class="screen-info">
+                        <span class="screen-icon">${screen.icon}</span>
+                        <span>${screen.name}</span>
+                    </div>
+                    <button class="remove-screen" onclick="removeScreen(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeScreen(index) {
+            videoGenerator.screens.splice(index, 1);
+            updateScreenList();
+        }
+        
+        function addJourneyStep() {
+            const input = document.getElementById('journeyInput');
+            const step = input.value.trim();
+            
+            if (step) {
+                videoGenerator.addJourneyStep(step);
+                input.value = '';
+                showNotification('Journey step added!', 'success');
+            }
+        }
+        
+        function autoGenerateScreens() {
+            const productName = document.getElementById('productName').value.trim();
+            
+            if (!productName) {
+                showNotification('Please enter product name first', 'error');
+                return;
+            }
+            
+            videoGenerator.product = { name: productName };
+            videoGenerator.autoGenerateScreens();
+            updateScreenList();
+            
+            showNotification('Screens auto-generated!', 'success');
+        }
+        
+        function generateDynamicVideo() {
+            const productName = document.getElementById('productName').value.trim();
+            const productDescription = document.getElementById('productDescription').value.trim();
+            
+            if (!productName) {
+                showNotification('Please enter product name', 'error');
+                return;
+            }
+            
+            if (videoGenerator.screens.length < 2) {
+                showNotification('Please add at least 2 screens', 'error');
+                return;
+            }
+            
+            if (videoGenerator.journeySteps.length < 2) {
+                showNotification('Please add at least 2 journey steps', 'error');
+                return;
+            }
+            
+            videoGenerator.product = { name: productName, description: productDescription };
+            
+            // Generate dynamic video
+            displayDynamicVideo();
+            
+            showNotification('Dynamic video generated!', 'success');
+        }
+        
+        function displayDynamicVideo() {
+            const videoDisplay = document.getElementById('videoDisplay');
+            
+            let videoHTML = `
+                <div class="dynamic-video">
+                    <div class="video-player">
+                        <div class="video-screen">
+            `;
+            
+            // Generate screen HTML for each step
+            videoGenerator.journeySteps.forEach((step, index) => {
+                if (index < videoGenerator.screens.length) {
+                    const screen = videoGenerator.screens[index];
+                    const screenHTML = videoGenerator.generateScreenHTML(screen, step);
+                    
+                    videoHTML += `
+                        <div class="generated-screen" id="screen-${index}">
+                            ${screenHTML}
+                        </div>
+                    `;
+                }
+            });
+            
+            videoHTML += `
+                        </div>
+                        <div class="video-controls">
+                            <button class="play-btn" id="playBtn" onclick="toggleVideo()">▶️</button>
+                            <div class="progress-bar" onclick="seekVideo(event)">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            videoDisplay.innerHTML = videoHTML;
+            
+            // Show first screen
+            showVideoScreen(0);
+        }
+        
+        let videoInterval;
+        let currentProgress = 0;
+        
+        function toggleVideo() {
+            if (videoGenerator.isPlaying) {
+                stopVideo();
+            } else {
+                playVideo();
+            }
+        }
+        
+        function playVideo() {
+            videoGenerator.isPlaying = true;
+            videoGenerator.currentVideoStep = 0;
+            document.getElementById('playBtn').textContent = '⏸️';
+            
+            videoInterval = setInterval(() => {
+                if (videoGenerator.currentVideoStep < videoGenerator.journeySteps.length) {
+                    showVideoScreen(videoGenerator.currentVideoStep);
+                    videoGenerator.currentVideoStep++;
+                    
+                    // Update progress
+                    currentProgress = (videoGenerator.currentVideoStep / videoGenerator.journeySteps.length) * 100;
+                    updateProgress();
+                } else {
+                    stopVideo();
+                }
+            }, 3000); // 3 seconds per screen
+        }
+        
+        function stopVideo() {
+            videoGenerator.isPlaying = false;
+            document.getElementById('playBtn').textContent = '▶️';
+            
+            if (videoInterval) {
+                clearInterval(videoInterval);
+            }
+        }
+        
+        function showVideoScreen(index) {
+            // Hide all screens
+            document.querySelectorAll('.generated-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show current screen
+            const currentScreen = document.getElementById(`screen-${index}`);
+            if (currentScreen) {
+                currentScreen.classList.add('active');
+            }
+        }
+        
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = currentProgress + '%';
+            
+            const currentTime = Math.floor((currentProgress / 100) * (videoGenerator.journeySteps.length * 3));
+            const totalTime = videoGenerator.journeySteps.length * 3;
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            const totalMinutes = Math.floor(totalTime / 60);
+            const totalSeconds = totalTime % 60;
+            
+            document.getElementById('timeDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')} / ${totalMinutes}:${totalSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        function seekVideo(event) {
+            const progressBar = event.currentTarget;
+            const rect = progressBar.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percentage = (x / rect.width) * 100;
+            currentProgress = Math.max(0, Math.min(100, percentage));
+            updateProgress();
+        }
+        
+        function resetVideo() {
+            videoGenerator.product = null;
+            videoGenerator.screens = [];
+            videoGenerator.journeySteps = [];
+            videoGenerator.currentVideoStep = 0;
+            videoGenerator.isPlaying = false;
+            currentProgress = 0;
+            
+            document.getElementById('productName').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('journeyInput').value = '';
+            
+            updateScreenList();
+            
+            document.getElementById('videoDisplay').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎬</div>
+                    <div class="empty-text">Dynamic Video Generator Reset</div>
+                    <div class="empty-subtext">Ready to generate auto-created screens for any product</div>
+                </div>
+            `;
+            
+            showNotification('Video generator reset!', 'info');
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            @keyframes bounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Handle Enter key in journey input
+        document.getElementById('journeyInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addJourneyStep();
+            }
+        });
+    </script>
+</body>
+</html>

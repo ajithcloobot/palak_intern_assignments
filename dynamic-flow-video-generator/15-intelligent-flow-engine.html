@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Flow Engine - EventSync</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s; }
+        .bg-circle:nth-child(2) { width: 200px; height: 200px; top: 50%; right: -100px; animation-delay: 5s; }
+        .bg-circle:nth-child(3) { width: 150px; height: 150px; bottom: -75px; left: 30%; animation-delay: 10s; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 33% { transform: translateY(-30px) rotate(120deg); } 66% { transform: translateY(30px) rotate(240deg); } }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideInDown 1s ease;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.2s both;
+            height: fit-content;
+        }
+        .panel-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Flow Detection */
+        .detection-section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .behavior-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .behavior-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .behavior-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.2);
+        }
+        .add-behavior-btn {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        .add-behavior-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Behavior List */
+        .behavior-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        .behavior-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 8px;
+            color: white;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-behavior {
+            background: rgba(234, 67, 53, 0.2);
+            border: 1px solid rgba(234, 67, 53, 0.3);
+            color: #ea4335;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        /* Screen Registry */
+        .screen-registry {
+            margin-bottom: 25px;
+        }
+        .screen-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .screen-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: #667eea;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Flow Visualization */
+        .flow-visualization {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            animation: slideInUp 1s ease 0.4s both;
+            min-height: 600px;
+        }
+        .flow-header {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Dynamic Flow Display */
+        .dynamic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .flow-step {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .flow-step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-trigger {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .step-screen {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .step-reason {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+            font-style: italic;
+        }
+        .step-arrow {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 24px;
+            align-self: center;
+            animation: bounce 2s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Intelligence Panel */
+        .intelligence-panel {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .intelligence-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .decision-log {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .decision-item {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .decision-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 60px 20px;
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .empty-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .empty-subtext {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        /* Animations */
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>🧠 Intelligent Flow Engine</h1>
+            <p>Dynamic user journey detection and adaptive flow generation</p>
+        </header>
+        
+        <div class="main-layout">
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <div class="panel-title">
+                    <span>⚙️</span>
+                    <span>Flow Configuration</span>
+                </div>
+                
+                <!-- User Behavior Detection -->
+                <div class="detection-section">
+                    <div class="section-title">
+                        <span>🔍</span>
+                        <span>User Behaviors</span>
+                    </div>
+                    <input type="text" class="behavior-input" id="behaviorInput" placeholder="Enter user behavior (e.g., 'User clicks submit button')">
+                    <button class="add-behavior-btn" onclick="addBehavior()">+ Add Behavior</button>
+                    <div class="behavior-list" id="behaviorList"></div>
+                </div>
+                
+                <!-- Available Screens -->
+                <div class="screen-registry">
+                    <div class="section-title">
+                        <span>📱</span>
+                        <span>Available Screens</span>
+                    </div>
+                    <div class="screen-checkbox">
+                        <input type="checkbox" id="screen-forms" checked>
+                        <label for="screen-forms">📝 Google Forms</label>
+                    </div>
+                    <div class="screen-checkbox">
+                        <input type="checkbox" id="screen-excel" checked>
+                        <label for="screen-excel">📊 Excel Sheet</label>
+                    </div>
+                    <div class="screen-checkbox">
+                        <input type="checkbox" id="screen-gmail" checked>
+                        <label for="screen-gmail">📧 Gmail</label>
+                    </div>
+                    <div class="screen-checkbox">
+                        <input type="checkbox" id="screen-dashboard">
+                        <label for="screen-dashboard">👤 Admin Dashboard</label>
+                    </div>
+                    <div class="screen-checkbox">
+                        <input type="checkbox" id="screen-payment">
+                        <label for="screen-payment">💳 Payment Gateway</label>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateIntelligentFlow()">🧠 Generate Intelligent Flow</button>
+                    <button class="btn btn-secondary" onclick="analyzeBehaviors()">🔍 Analyze Patterns</button>
+                    <button class="btn btn-secondary" onclick="resetEngine()">🔄 Reset Engine</button>
+                </div>
+            </div>
+            
+            <!-- Flow Visualization -->
+            <div class="flow-visualization">
+                <div class="flow-header">
+                    <span>🎯</span>
+                    <span>Dynamic Flow Visualization</span>
+                </div>
+                
+                <div id="flowDisplay">
+                    <div class="empty-state">
+                        <div class="empty-icon">🧠</div>
+                        <div class="empty-text">Intelligent Flow Engine Ready</div>
+                        <div class="empty-subtext">Add user behaviors and generate adaptive flow sequences</div>
+                    </div>
+                </div>
+                
+                <!-- Intelligence Panel -->
+                <div class="intelligence-panel" id="intelligencePanel" style="display: none;">
+                    <div class="intelligence-title">
+                        <span>🤖</span>
+                        <span>AI Decision Log</span>
+                    </div>
+                    <div class="decision-log" id="decisionLog"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User behaviors array
+        let userBehaviors = [];
+        
+        // Screen configurations
+        const screenConfigs = {
+            'screen-forms': { name: 'Google Forms', icon: '📝', triggers: ['form', 'input', 'submit', 'registration'] },
+            'screen-excel': { name: 'Excel Sheet', icon: '📊', triggers: ['data', 'sync', 'export', 'analysis'] },
+            'screen-gmail': { name: 'Gmail', icon: '📧', triggers: ['email', 'notification', 'send', 'confirm'] },
+            'screen-dashboard': { name: 'Admin Dashboard', icon: '👤', triggers: ['admin', 'manage', 'approve', 'review'] },
+            'screen-payment': { name: 'Payment Gateway', icon: '💳', triggers: ['payment', 'checkout', 'billing', 'transaction'] }
+        };
+        
+        // Decision engine logic
+        class FlowDecisionEngine {
+            constructor() {
+                this.decisions = [];
+            }
+            
+            analyzeBehavior(behavior, availableScreens) {
+                const behaviorLower = behavior.toLowerCase();
+                let matchedScreens = [];
+                let reasoning = '';
+                
+                // Analyze behavior and match to screens
+                for (const [screenId, screenConfig] of Object.entries(screenConfigs)) {
+                    if (!availableScreens.includes(screenId)) continue;
+                    
+                    const triggers = screenConfig.triggers;
+                    const matchScore = triggers.reduce((score, trigger) => {
+                        if (behaviorLower.includes(trigger)) {
+                            return score + 1;
+                        }
+                        return score;
+                    }, 0);
+                    
+                    if (matchScore > 0) {
+                        matchedScreens.push({ screenId, score: matchScore, config: screenConfig });
+                    }
+                }
+                
+                // Sort by match score
+                matchedScreens.sort((a, b) => b.score - a.score);
+                
+                if (matchedScreens.length > 0) {
+                    const bestMatch = matchedScreens[0];
+                    reasoning = `Behavior "${behavior}" matched ${bestMatch.config.triggers.join(', ')} triggers for ${bestMatch.config.name}`;
+                    
+                    this.decisions.push({
+                        behavior,
+                        selectedScreen: bestMatch.screenId,
+                        confidence: bestMatch.score / bestMatch.config.triggers.length,
+                        reasoning,
+                        timestamp: new Date().toLocaleTimeString()
+                    });
+                    
+                    return {
+                        screen: bestMatch.screenId,
+                        confidence: bestMatch.score / bestMatch.config.triggers.length,
+                        reasoning
+                    };
+                }
+                
+                // Default fallback
+                const fallbackScreen = availableScreens[0];
+                reasoning = `No specific match found, using default screen`;
+                
+                this.decisions.push({
+                    behavior,
+                    selectedScreen: fallbackScreen,
+                    confidence: 0.3,
+                    reasoning,
+                    timestamp: new Date().toLocaleTimeString()
+                });
+                
+                return {
+                    screen: fallbackScreen,
+                    confidence: 0.3,
+                    reasoning
+                };
+            }
+            
+            generateFlow(behaviors, availableScreens) {
+                const flow = [];
+                
+                behaviors.forEach((behavior, index) => {
+                    const decision = this.analyzeBehavior(behavior, availableScreens);
+                    flow.push({
+                        step: index + 1,
+                        trigger: behavior,
+                        screen: decision.screen,
+                        confidence: decision.confidence,
+                        reasoning: decision.reasoning
+                    });
+                });
+                
+                return flow;
+            }
+        }
+        
+        const flowEngine = new FlowDecisionEngine();
+        
+        function addBehavior() {
+            const input = document.getElementById('behaviorInput');
+            const behavior = input.value.trim();
+            
+            if (behavior) {
+                userBehaviors.push(behavior);
+                updateBehaviorList();
+                input.value = '';
+                showNotification('Behavior added!', 'success');
+            }
+        }
+        
+        function updateBehaviorList() {
+            const list = document.getElementById('behaviorList');
+            list.innerHTML = userBehaviors.map((behavior, index) => `
+                <div class="behavior-item">
+                    <span>${behavior}</span>
+                    <button class="remove-behavior" onclick="removeBehavior(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeBehavior(index) {
+            userBehaviors.splice(index, 1);
+            updateBehaviorList();
+        }
+        
+        function getSelectedScreens() {
+            const screens = [];
+            document.querySelectorAll('.screen-checkbox input:checked').forEach(checkbox => {
+                screens.push(checkbox.id);
+            });
+            return screens;
+        }
+        
+        function generateIntelligentFlow() {
+            const selectedScreens = getSelectedScreens();
+            
+            if (selectedScreens.length < 2) {
+                showNotification('Please select at least 2 screens', 'error');
+                return;
+            }
+            
+            if (userBehaviors.length < 2) {
+                showNotification('Please add at least 2 user behaviors', 'error');
+                return;
+            }
+            
+            // Generate intelligent flow
+            const flow = flowEngine.generateFlow(userBehaviors, selectedScreens);
+            
+            // Display flow
+            displayIntelligentFlow(flow);
+            
+            // Show intelligence panel
+            document.getElementById('intelligencePanel').style.display = 'block';
+            updateDecisionLog();
+            
+            showNotification('Intelligent flow generated!', 'success');
+        }
+        
+        function displayIntelligentFlow(flow) {
+            const flowDisplay = document.getElementById('flowDisplay');
+            
+            let flowHTML = '<div class="dynamic-flow">';
+            
+            flow.forEach((step, index) => {
+                const screenConfig = screenConfigs[step.screen];
+                const confidencePercent = Math.round(step.confidence * 100);
+                
+                flowHTML += `
+                    <div class="flow-step">
+                        <div class="step-number">${step.step}</div>
+                        <div class="step-content">
+                            <div class="step-trigger">🔍 Trigger: "${step.trigger}"</div>
+                            <div class="step-screen">${screenConfig.icon} ${screenConfig.name}</div>
+                            <div class="step-reason">💭 Reason: ${step.reasoning}</div>
+                            <div class="step-reason">🎯 Confidence: ${confidencePercent}%</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add arrow between steps
+                if (index < flow.length - 1) {
+                    flowHTML += '<div class="step-arrow">↓</div>';
+                }
+            });
+            
+            flowHTML += '</div>';
+            
+            flowDisplay.innerHTML = flowHTML;
+            
+            // Animate steps
+            setTimeout(() => {
+                document.querySelectorAll('.flow-step').forEach((step, index) => {
+                    step.style.animation = `slideInUp 0.5s ease ${index * 0.1}s both`;
+                });
+            }, 100);
+        }
+        
+        function updateDecisionLog() {
+            const log = document.getElementById('decisionLog');
+            log.innerHTML = flowEngine.decisions.map(decision => `
+                <div class="decision-item">
+                    <strong>${decision.timestamp}</strong><br>
+                    Behavior: "${decision.behavior}"<br>
+                    Selected: ${screenConfigs[decision.selectedScreen].name}<br>
+                    Confidence: ${Math.round(decision.confidence * 100)}%<br>
+                    Reason: ${decision.reasoning}
+                </div>
+            `).join('');
+        }
+        
+        function analyzeBehaviors() {
+            if (userBehaviors.length === 0) {
+                showNotification('Please add behaviors first', 'error');
+                return;
+            }
+            
+            // Pattern analysis
+            const patterns = {
+                'form_submission': ['submit', 'form', 'register'],
+                'data_sync': ['sync', 'save', 'export'],
+                'notification': ['email', 'send', 'notify'],
+                'management': ['admin', 'manage', 'approve'],
+                'payment': ['pay', 'checkout', 'billing']
+            };
+            
+            const detectedPatterns = [];
+            
+            for (const [patternName, keywords] of Object.entries(patterns)) {
+                const matches = userBehaviors.filter(behavior => 
+                    keywords.some(keyword => behavior.toLowerCase().includes(keyword))
+                );
+                
+                if (matches.length > 0) {
+                    detectedPatterns.push({
+                        pattern: patternName,
+                        matches: matches.length,
+                        behaviors: matches
+                    });
+                }
+            }
+            
+            // Show analysis results
+            let analysisHTML = '<div style="color: white; margin-bottom: 20px;"><h3>🔍 Pattern Analysis Results:</h3>';
+            
+            detectedPatterns.forEach(pattern => {
+                analysisHTML += `
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <strong>${pattern.pattern.replace('_', ' ').toUpperCase()}</strong><br>
+                        Matches: ${pattern.matches}<br>
+                        Behaviors: ${pattern.behaviors.join(', ')}
+                    </div>
+                `;
+            });
+            
+            analysisHTML += '</div>';
+            
+            const flowDisplay = document.getElementById('flowDisplay');
+            flowDisplay.innerHTML = analysisHTML;
+            
+            showNotification('Pattern analysis complete!', 'success');
+        }
+        
+        function resetEngine() {
+            userBehaviors = [];
+            flowEngine.decisions = [];
+            updateBehaviorList();
+            
+            document.getElementById('flowDisplay').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🧠</div>
+                    <div class="empty-text">Intelligent Flow Engine Reset</div>
+                    <div class="empty-subtext">Ready for new behaviors and flow generation</div>
+                </div>
+            `;
+            
+            document.getElementById('intelligencePanel').style.display = 'none';
+            
+            showNotification('Engine reset successfully!', 'info');
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Handle Enter key in behavior input
+        document.getElementById('behaviorInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addBehavior();
+            }
+        });
+    </script>
+</body>
+</html>
