@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Event Registrations - Public View</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #4285f4;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        th {
+            background: #4285f4;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .refresh-btn {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .refresh-btn:hover {
+            background: #357ae8;
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .footer p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Live Event Registrations</h1>
+            <p><strong>Registration Data from Your Local System</strong></p>
+        </div>
+        
+        <div class="data-info">
+            <p><strong>📊 Total Registrations:</strong> <span id="total-count">Loading...</span></p>
+            <p><strong>⏳ Pending:</strong> <span id="pending-count">Loading...</span></p>
+            <p><strong>✅ Approved:</strong> <span id="approved-count">Loading...</span></p>
+            <p><strong>📧 Emails Sent:</strong> <span id="emails-count">Loading...</span></p>
+            <p><strong>🔄 Last Updated:</strong> <span id="last-updated">Loading...</span></p>
+        </div>
+        
+        <table id="registrations-table">
+            <thead>
+                <tr>
+                    <th>Timestamp</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>Ticket ID</th>
+                    <th>Approved Date</th>
+                    <th>Email Sent</th>
+                </tr>
+            </thead>
+            <tbody id="registrations-body">
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                        Loading registration data...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="refresh-btn" onclick="loadData()">
+                🔄 Refresh Data
+            </button>
+        </div>
+        
+        <div class="footer">
+            <p>
+                <strong>📊 Live Event Registration System</strong><br>
+                Data updates automatically when new users register or get approved.<br>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        // Load data from your local server
+        async function loadData() {
+            try {
+                tbody.innerHTML = '';
+                
+                const response = await fetch('http://localhost:3001/api/registrations');
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    let html = '';
+                    
+                    data.forEach(reg => {
+                        const statusClass = reg.status === 'Approved' ? 'status-approved' : 
+                                          reg.status === 'Pending' ? 'status-pending' : 'status-rejected';
+                        
+                        html += '<tr>';
+                        html += '<td>' + reg.timestamp + '</td>';
+                        html += '<td>' + reg.name + '</td>';
+                        html += '<td>' + reg.email + '</td>';
+                        html += '<td>' + reg.event + '</td>';
+                        html += '<td><span class="' + statusClass + '">' + reg.status + '</span></td>';
+                        html += '<td>' + reg.ticketId + '</td>';
+                        html += '<td>' + (reg.approvedDate || '') + '</td>';
+                        html += '<td>' + reg.emailSent + '</td>';
+                        html += '</tr>';
+                    });
+                    
+                    tbody.innerHTML = html;
+                    
+                    // Update statistics
+                    document.getElementById('total-count').textContent = data.length;
+                    document.getElementById('pending-count').textContent = data.filter(r => r.status === 'Pending').length;
+                    document.getElementById('approved-count').textContent = data.filter(r => r.status === 'Approved').length;
+                    document.getElementById('emails-count').textContent = data.filter(r => r.emailSent === 'Yes').length;
+                    
+                    // Update last updated time
+                    document.getElementById('last-updated').textContent = new Date().toLocaleString();
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">No registration data found</td></tr>';
+                }
+                
+                loading.style.display = 'none';
+                
+            } catch (error) {
+                loading.style.display = 'none';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #dc3545;">Error loading data: ' + error.message + '</td></tr>';
+            }
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(loadData, 30000);
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

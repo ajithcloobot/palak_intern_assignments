@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1774971232348,
+    "timestamp": "3/31/2026, 9:03:52 PM",
+    "name": "Palak Gupta",
+    "email": "palakugupta@gmail.com",
+    "event": "Tech Summit 2024",
+    "status": "Approved",
+    "ticketId": "TKT-MNES1K7O-P56BX",
+    "approvedDate": "3/31/2026, 9:04:02 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774971415393,
+    "timestamp": "3/31/2026, 9:06:55 PM",
+    "name": "Palak Gupta",
+    "email": "palak.ec22@bmsce.ac.in",
+    "event": "Developer Conference",
+    "status": "Approved",
+    "ticketId": "TKT-MNES5HG6-KAD8H",
+    "approvedDate": "3/31/2026, 9:07:03 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774972291877,
+    "timestamp": "3/31/2026, 9:21:31 PM",
+    "name": "Ruchika Todi",
+    "email": "ruchikatodi.is23@bmsce.ac.in",
+    "event": "Startup Meetup",
+    "status": "Approved",
+    "ticketId": "TKT-MNESO9QM-TC2AE",
+    "approvedDate": "3/31/2026, 9:21:39 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774972512800,
+    "timestamp": "3/31/2026, 9:25:12 PM",
+    "name": "Chandra BV",
+    "email": "palakugupta@gmail.com",
+    "event": "Design Thinking Seminar",
+    "status": "Pending",
+    "ticketId": "TKT-MNEST07P-KPJ3Z",
+    "approvedDate": "",
+    "emailSent": "No"
+  },
+  {
+    "id": 1774973749311,
+    "timestamp": "3/31/2026, 9:45:49 PM",
+    "name": "Neha Sharma",
+    "email": "palakugupta@gmail.com",
+    "event": "AI Workshop",
+    "status": "Approved",
+    "ticketId": "TKT-MNETJIBA-0KEEG",
+    "approvedDate": "3/31/2026, 10:06:50 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774976156910,
+    "timestamp": "3/31/2026, 10:25:56 PM",
+    "name": "Vidhi Mahajan",
+    "email": "palakugupta@gmail.com",
+    "event": "AI Workshop",
+    "status": "Pending",
+    "ticketId": "TKT-MNEUZ415-EU40R",
+    "approvedDate": "",
+    "emailSent": "No"
+  },
+  {
+    "id": 1774977372287,
+    "timestamp": "3/31/2026, 10:46:12 PM",
+    "name": "Arjun Y Mavaji",
+    "email": "palak.ec22@bmsce.ac.in",
+    "event": "Startup Meetup",
+    "status": "Approved",
+    "ticketId": "TKT-MNEVP5TO-BFFIX",
+    "approvedDate": "3/31/2026, 10:46:18 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774979811992,
+    "timestamp": "3/31/2026, 11:26:51 PM",
+    "name": "Aanand Hegde",
+    "email": "palak.ec22@bmsce.ac.in",
+    "event": "Developer Conference",
+    "status": "Pending",
+    "ticketId": "TKT-MNEX5GB3-P4ZTG",
+    "approvedDate": "",
+    "emailSent": "No"
+  },
+  {
+    "id": 1774980002552,
+    "timestamp": "3/31/2026, 11:30:02 PM",
+    "name": "Uttam Das Gupta",
+    "email": "palak.ec22@bmsce.ac.in",
+    "event": "Developer Conference",
+    "status": "Approved",
+    "ticketId": "TKT-MNEX9JB3-UGRQT",
+    "approvedDate": "3/31/2026, 11:30:16 PM",
+    "emailSent": "Yes"
+  },
+  {
+    "id": 1774980203955,
+    "timestamp": "3/31/2026, 11:33:23 PM",
+    "name": "Rohit Nair",
+    "email": "palak.ec22@bmsce.ac.in",
+    "event": "Developer Conference",
+    "status": "Approved",
+    "ticketId": "TKT-MNEXDUPP-NC957",
+    "approvedDate": "3/31/2026, 11:33:44 PM",
+    "emailSent": "Yes"
+  }
+]

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventSync Presentation Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -150px;
+            left: -150px;
+            animation-delay: 0s;
+        }
+        .bg-circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: -100px;
+            animation-delay: 5s;
+        }
+        .bg-circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: -75px;
+            left: 30%;
+            animation-delay: 10s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 60px;
+            animation: slideInDown 1s ease;
+        }
+        .header h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p {
+            font-size: 20px;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        /* Featured Demo */
+        .featured-demo {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 1s ease 0.2s both;
+            transition: all 0.3s ease;
+        }
+        .featured-demo:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .featured-demo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: shine 3s ease infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4);
+            animation: pulse 2s ease infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .demo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+        .demo-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        .demo-description {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+        .demo-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .demo-link::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .demo-link:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .demo-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Regular Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            animation: slideInUp 1s ease both;
+            position: relative;
+            overflow: hidden;
+        }
+        .card:nth-child(2) { animation-delay: 0.3s; }
+        .card:nth-child(3) { animation-delay: 0.4s; }
+        .card:nth-child(4) { animation-delay: 0.5s; }
+        .card:nth-child(5) { animation-delay: 0.6s; }
+        .card:nth-child(6) { animation-delay: 0.7s; }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .card-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .card-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .card-features {
+            margin: 15px 0;
+        }
+        .feature {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .card-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 40px 20px;
+            animation: slideInUp 1s ease 0.8s both;
+        }
+        .footer p {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .footer-link:hover {
+            color: white;
+        }
+        
+        /* Animations */
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 40px;
+            }
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .featured-demo {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>⚡ EventSync Presentation Hub</h1>
+            <p>Complete visual presentation package for real-time event registration management</p>
+        </header>
+        
+        <main class="main-grid">
+            <!-- Dynamic Video Generator -->
+            <div class="card featured">
+                <div class="card-icon">📹</div>
+                <h3 class="card-title">Dynamic Video Generator</h3>
+                <div class="card-badges">
+                    <span class="badge">Video Gen</span>
+                </div>
+                <p class="card-description">
+                    Auto-generate screens and create professional videos for ANY product. Smart detection creates 
+                    realistic interfaces (forms, dashboards, payments) with full video player controls.
+                </p>
+                <div class="card-features">
+                    <div class="feature">Auto-generate screens</div>
+                    <div class="feature">Realistic interfaces</div>
+                    <div class="feature">Full video player controls</div>
+                </div>
+                <a href="17-dynamic-video-generator.html" class="card-link">
+                    <span>Launch Video Generator</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <!-- Professional Video Demo -->
+            <div class="card featured">
+                <div class="featured-badge">🎬 PREMIUM</div>
+                <div class="demo-icon">🎥</div>
+                <h2 class="demo-title">Professional Video Demo</h2>
+                <p class="demo-description">
+                    High-quality animated walkthrough with realistic Google Forms, Excel Sheet, and Gmail interfaces. 
+                    Features typing animations, data transfer effects, and professional video controls.
+                </p>
+                <a href="14-professional-video-demo.html" class="demo-link">
+                    <span>🎬 Watch Video Demo</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <!-- Dynamic Flow Generator -->
+            <div class="card">
+                <div class="demo-icon">🔄</div>
+                <h3 class="demo-title">Dynamic Flow Generator</h3>
+                <p class="demo-description">
+                    Configure any user journey and product screens to generate custom flow visualizations. 
+                    Future-proof system for any product workflow.
+                </p>
+                <a href="09-dynamic-flow-generator.html" class="demo-link">
+                    <span>🚀 Launch Generator</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <!-- Individual Wireframes -->
+            <div class="card">
+                <div class="card-icon">📊</div>
+                <h3 class="card-title">User Journey Flowchart</h3>
+                <div class="card-badges">
+                    <span class="badge">📝 4 Steps</span>
+                    <span class="badge">🎯 Process Flow</span>
+                </div>
+                <p class="card-description">
+                    Visual flowchart showing complete user journey: Registration → Instant Sync → Admin Review → Email Delivery. 
+                    Features animated arrows, status indicators, and clear step-by-step process visualization.
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ Interactive flow diagram</div>
+                    <div class="feature">✅ Icon-based navigation</div>
+                    <div class="feature">✅ Status progression</div>
+                </div>
+                <a href="01-user-journey-flowchart.html" class="card-link">
+                    <span>View Flowchart</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">📝</div>
+                <h3 class="card-title">Registration Form</h3>
+                <div class="card-badges">
+                    <span class="badge">📱 Responsive</span>
+                    <span class="badge">🎨 Dual Design</span>
+                </div>
+                <p class="card-description">
+                    Mobile-first registration form with dual wireframes showing both mobile (300px) and desktop (480px) layouts. 
+                    Includes form validation, input animations, and submit button states.
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ Mobile & Desktop views</div>
+                    <div class="feature">✅ Form validation states</div>
+                    <div class="feature">✅ Input animations</div>
+                </div>
+                <a href="02-wireframe-registration-form.html" class="card-link">
+                    <span>View Form</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">👤</div>
+                <h3 class="card-title">Admin Dashboard</h3>
+                <div class="card-badges">
+                    <span class="badge">⚡ Real-time</span>
+                    <span class="badge">🎯 Actions</span>
+                </div>
+                <p class="card-description">
+                    Admin interface for managing registrations with real-time updates, status badges (Pending/Approved), 
+                    and one-click approve/reject actions. Features user avatars and statistics dashboard.
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ Real-time status updates</div>
+                    <div class="feature">✅ Quick approve/reject</div>
+                    <div class="feature">✅ User statistics</div>
+                </div>
+                <a href="03-wireframe-admin-dashboard.html" class="card-link">
+                    <span>View Dashboard</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">🗄️</div>
+                <h3 class="card-title">Google Sheets View</h3>
+                <div class="card-badges">
+                    <span class="badge">📊 Data Sync</span>
+                    <span class="badge">🔄 Real-time</span>
+                </div>
+                <p class="card-description">
+                    Mock Google Sheets interface showing real-time data synchronization. Features authentic Google Sheets UI, 
+                    automatic row highlighting for new entries, and status tracking.
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ Authentic Sheets UI</div>
+                    <div class="feature">✅ Real-time sync</div>
+                    <div class="feature">✅ Data validation</div>
+                </div>
+                <a href="04-wireframe-google-sheets.html" class="card-link">
+                    <span>View Sheets</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">⭐</div>
+                <h3 class="card-title">Benefits Section</h3>
+                <div class="card-badges">
+                    <span class="badge">💎 Features</span>
+                    <span class="badge">🎯 Value Props</span>
+                </div>
+                <p class="card-description">
+                    4-column feature grid showcasing key benefits: Real-time Sync, Auto Emails, Mobile-Ready, 
+                    and Secure & Simple. Each feature includes icons and detailed descriptions.
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ 4 key features</div>
+                    <div class="feature">✅ Icon-based design</div>
+                    <div class="feature">✅ Value propositions</div>
+                </div>
+                <a href="05-benefits-section.html" class="card-link">
+                    <span>View Benefits</span>
+                    <span>→</span>
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-icon">⚙️</div>
+                <h3 class="card-title">Technology Stack</h3>
+                <div class="card-badges">
+                    <span class="badge">🛠️ Tech</span>
+                    <span class="badge">📋 Components</span>
+                </div>
+                <p class="card-description">
+                    Clean technology stack display showing frontend (HTML5/CSS3/JS), backend (Node.js/Express), 
+                    database (JSON/Google Sheets), email (Nodemailer), and sync (Google Apps Script).
+                </p>
+                <div class="card-features">
+                    <div class="feature">✅ 5 tech components</div>
+                    <div class="feature">✅ Modern stack</div>
+                    <div class="feature">✅ Integration details</div>
+                </div>
+                <a href="06-tech-stack.html" class="card-link">
+                    <span>View Tech Stack</span>
+                    <span>→</span>
+                </a>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>📁 Complete presentation package ready for stakeholder review</p>
+            <div class="footer-links">
+                <a href="presentation.html" class="footer-link">📑 Combined Presentation</a>
+                <a href="07-interactive-demo.html" class="footer-link">🎬 Interactive Demo</a>
+                <a href="README.md" class="footer-link">📄 Documentation</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

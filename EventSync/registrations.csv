@@ -1,0 +1,11 @@
+Timestamp,Name,Email,Event,Status,TicketID,ApprovedDate,EmailSent
+"3/31/2026, 9:03:52 PM","Palak Gupta","palakugupta@gmail.com","Tech Summit 2024","Approved","TKT-MNES1K7O-P56BX","3/31/2026, 9:04:02 PM","Yes"
+"3/31/2026, 9:06:55 PM","Palak Gupta","palak.ec22@bmsce.ac.in","Developer Conference","Approved","TKT-MNES5HG6-KAD8H","3/31/2026, 9:07:03 PM","Yes"
+"3/31/2026, 9:21:31 PM","Ruchika Todi","ruchikatodi.is23@bmsce.ac.in","Startup Meetup","Approved","TKT-MNESO9QM-TC2AE","3/31/2026, 9:21:39 PM","Yes"
+"3/31/2026, 9:25:12 PM","Chandra BV","palakugupta@gmail.com","Design Thinking Seminar","Pending","TKT-MNEST07P-KPJ3Z","","No"
+"3/31/2026, 9:45:49 PM","Neha Sharma","palakugupta@gmail.com","AI Workshop","Approved","TKT-MNETJIBA-0KEEG","3/31/2026, 10:06:50 PM","Yes"
+"3/31/2026, 10:25:56 PM","Vidhi Mahajan","palakugupta@gmail.com","AI Workshop","Pending","TKT-MNEUZ415-EU40R","","No"
+"3/31/2026, 10:46:12 PM","Arjun Y Mavaji","palak.ec22@bmsce.ac.in","Startup Meetup","Approved","TKT-MNEVP5TO-BFFIX","3/31/2026, 10:46:18 PM","Yes"
+"3/31/2026, 11:26:51 PM","Aanand Hegde","palak.ec22@bmsce.ac.in","Developer Conference","Pending","TKT-MNEX5GB3-P4ZTG","","No"
+"3/31/2026, 11:30:02 PM","Uttam Das Gupta","palak.ec22@bmsce.ac.in","Developer Conference","Approved","TKT-MNEX9JB3-UGRQT","3/31/2026, 11:30:16 PM","Yes"
+"3/31/2026, 11:33:23 PM","Rohit Nair","palak.ec22@bmsce.ac.in","Developer Conference","Approved","TKT-MNEXDUPP-NC957","3/31/2026, 11:33:44 PM","Yes"

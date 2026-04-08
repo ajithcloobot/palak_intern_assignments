@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Video Demo - EventSync</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite ease-in-out;
+        }
+        .bg-circle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s; }
+        .bg-circle:nth-child(2) { width: 200px; height: 200px; top: 50%; right: -100px; animation-delay: 5s; }
+        .bg-circle:nth-child(3) { width: 150px; height: 150px; bottom: -75px; left: 30%; animation-delay: 10s; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0deg); } 33% { transform: translateY(-30px) rotate(120deg); } 66% { transform: translateY(30px) rotate(240deg); } }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideInDown 1s ease;
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Video Container */
+        .video-container {
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 40px;
+            animation: slideInUp 1s ease 0.2s both;
+        }
+        .video-header {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        
+        /* Video Player */
+        .video-player {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        .video-screen {
+            width: 100%;
+            height: 500px;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Video Controls */
+        .video-controls {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .play-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .time-display {
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            min-width: 100px;
+            text-align: center;
+        }
+        .volume-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        /* Video Scenes */
+        .video-scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .video-scene.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Scene 1: Google Forms */
+        .forms-scene {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+        }
+        .forms-header {
+            background: #673ab7;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px 8px 0 0;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .forms-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .form-field {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .typing-animation {
+            background: #f0f0f0;
+            border-color: #673ab7;
+            position: relative;
+            overflow: hidden;
+        }
+        .typing-animation::after {
+            content: '|';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        .submit-btn {
+            background: #673ab7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .submit-btn:hover {
+            background: #5a35a0;
+            transform: translateY(-2px);
+        }
+        
+        /* Scene 2: Data Transfer */
+        .data-transfer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+        }
+        .data-packet {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4);
+            animation: movePacket 3s ease-in-out;
+        }
+        @keyframes movePacket {
+            0% { left: 10%; top: 50%; transform: translateY(-50%); }
+            50% { left: 50%; top: 30%; transform: translateY(-50%) scale(1.2); }
+            100% { left: 90%; top: 50%; transform: translateY(-50%); }
+        }
+        .transfer-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, #673ab7 0%, #667eea 50%, #34a853 100%);
+            transform: translateY(-50%);
+            opacity: 0.3;
+        }
+        
+        /* Scene 3: Excel Sheet */
+        .excel-scene {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .excel-header {
+            background: #217346;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .excel-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .excel-table th {
+            background: #f3f2f1;
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #595959;
+            border: 1px solid #d4d4d4;
+        }
+        .excel-table td {
+            padding: 10px;
+            font-size: 12px;
+            color: #595959;
+            border: 1px solid #d4d4d4;
+        }
+        .new-row {
+            background: #e8f5e9 !important;
+            animation: highlightRow 2s ease;
+        }
+        @keyframes highlightRow {
+            0% { background: #e8f5e9; }
+            100% { background: transparent; }
+        }
+        
+        /* Scene 4: Gmail */
+        .gmail-scene {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .gmail-header {
+            background: #ea4335;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .gmail-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .email-content {
+            padding: 20px;
+        }
+        .email-subject {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .email-body {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .ticket-box {
+            background: linear-gradient(135deg, #ea4335 0%, #d33b2c 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+        .ticket-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .ticket-event {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .ticket-id {
+            font-size: 14px;
+            opacity: 0.9;
+            font-family: monospace;
+        }
+        
+        /* Scene Selector */
+        .scene-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .scene-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .scene-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .scene-btn.active {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        /* Animations */
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .video-screen { height: 400px; }
+            .scene-selector { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <h1>🎬 Professional Video Demo</h1>
+            <p>High-quality animated walkthrough of the complete EventSync user journey</p>
+        </header>
+        
+        <div class="video-container">
+            <div class="video-header">
+                <span>🎥</span>
+                <span>EventSync User Journey - Professional Video Demo</span>
+            </div>
+            
+            <!-- Scene Selector -->
+            <div class="scene-selector">
+                <button class="scene-btn active" onclick="playScene(1)">📝 Google Forms</button>
+                <button class="scene-btn" onclick="playScene(2)">🔄 Data Transfer</button>
+                <button class="scene-btn" onclick="playScene(3)">📊 Excel Sheet</button>
+                <button class="scene-btn" onclick="playScene(4)">📧 Gmail</button>
+                <button class="scene-btn" onclick="playFullDemo()">🎬 Full Demo</button>
+            </div>
+            
+            <!-- Video Player -->
+            <div class="video-player">
+                <div class="video-screen">
+                    <!-- Scene 1: Google Forms -->
+                    <div class="video-scene active" id="scene1">
+                        <div class="forms-scene">
+                            <div class="forms-header">
+                                <span>📝</span>
+                                <span class="forms-title">Google Forms</span>
+                            </div>
+                            <div class="form-field">
+                                <div class="form-label">Full Name</div>
+                                <input type="text" class="form-input typing-animation" id="nameInput" placeholder="Type your name...">
+                            </div>
+                            <div class="form-field">
+                                <div class="form-label">Email Address</div>
+                                <input type="email" class="form-input" id="emailInput" placeholder="your@email.com">
+                            </div>
+                            <div class="form-field">
+                                <div class="form-label">Select Event</div>
+                                <select class="form-input" id="eventSelect">
+                                    <option>Choose an event...</option>
+                                    <option>Tech Summit 2024</option>
+                                    <option>AI Workshop</option>
+                                    <option>Web Dev Bootcamp</option>
+                                </select>
+                            </div>
+                            <button class="submit-btn" onclick="submitForm()">Submit Registration</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Scene 2: Data Transfer -->
+                    <div class="video-scene" id="scene2">
+                        <div class="data-transfer">
+                            <div class="transfer-line"></div>
+                            <div class="data-packet">📦</div>
+                            <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); color: #667eea; font-weight: 600;">
+                                Data Syncing to Cloud...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Scene 3: Excel Sheet -->
+                    <div class="video-scene" id="scene3">
+                        <div class="excel-scene">
+                            <div class="excel-header">
+                                <span>📊</span>
+                                <span class="excel-title">Microsoft Excel</span>
+                            </div>
+                            <table class="excel-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Event</th>
+                                        <th>Status</th>
+                                        <th>Ticket ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>John Doe</td>
+                                        <td>john.doe@example.com</td>
+                                        <td>Tech Summit 2024</td>
+                                        <td style="color: #217346;">Approved</td>
+                                        <td>EVT-2404-0001</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sarah Miller</td>
+                                        <td>sarah@company.com</td>
+                                        <td>AI Workshop</td>
+                                        <td style="color: #217346;">Approved</td>
+                                        <td>EVT-2404-0002</td>
+                                    </tr>
+                                    <tr class="new-row" id="newRow" style="display: none;">
+                                        <td id="newName">-</td>
+                                        <td id="newEmail">-</td>
+                                        <td id="newEvent">-</td>
+                                        <td style="color: #c65402;">Pending</td>
+                                        <td>-</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Scene 4: Gmail -->
+                    <div class="video-scene" id="scene4">
+                        <div class="gmail-scene">
+                            <div class="gmail-header">
+                                <span>📧</span>
+                                <span class="gmail-title">Gmail</span>
+                            </div>
+                            <div class="email-content">
+                                <div class="email-subject">🎉 Your Event Ticket is Ready!</div>
+                                <div class="email-body">
+                                    <p>Dear <span id="emailName">John Doe</span>,</p>
+                                    <p>Congratulations! Your registration has been approved.</p>
+                                    <p>Your ticket details:</p>
+                                </div>
+                                <div class="ticket-box">
+                                    <div class="ticket-icon">🎫</div>
+                                    <div class="ticket-event" id="ticketEvent">Tech Summit 2024</div>
+                                    <div class="ticket-id" id="ticketId">EVT-2404-0003</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Video Controls -->
+                <div class="video-controls">
+                    <button class="play-btn" id="playBtn" onclick="togglePlay()">▶️</button>
+                    <div class="progress-bar" onclick="seekVideo(event)">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+                    <button class="volume-btn" onclick="toggleMute()">🔊</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScene = 1;
+        let isPlaying = false;
+        let videoTimer;
+        let currentProgress = 0;
+        let fullDemoMode = false;
+        
+        function playScene(sceneNumber) {
+            // Stop any current playback
+            stopVideo();
+            
+            // Hide all scenes
+            document.querySelectorAll('.video-scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            
+            // Show selected scene
+            document.getElementById(`scene${sceneNumber}`).classList.add('active');
+            
+            // Update buttons
+            document.querySelectorAll('.scene-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            currentScene = sceneNumber;
+            resetProgress();
+            
+            // Start scene-specific animations
+            if (sceneNumber === 1) {
+                animateFormFilling();
+            } else if (sceneNumber === 2) {
+                animateDataTransfer();
+            } else if (sceneNumber === 3) {
+                animateExcelUpdate();
+            } else if (sceneNumber === 4) {
+                animateEmailDelivery();
+            }
+        }
+        
+        function playFullDemo() {
+            fullDemoMode = true;
+            currentScene = 1;
+            isPlaying = true;
+            document.getElementById('playBtn').textContent = '⏸️';
+            
+            // Update button
+            document.querySelectorAll('.scene-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            playSceneSequence();
+        }
+        
+        function playSceneSequence() {
+            if (!fullDemoMode) return;
+            
+            // Play current scene
+            document.querySelectorAll('.video-scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            document.getElementById(`scene${currentScene}`).classList.add('active');
+            
+            // Start scene animations
+            if (currentScene === 1) {
+                animateFormFilling();
+            } else if (currentScene === 2) {
+                animateDataTransfer();
+            } else if (currentScene === 3) {
+                animateExcelUpdate();
+            } else if (currentScene === 4) {
+                animateEmailDelivery();
+            }
+            
+            // Move to next scene after 4 seconds
+            setTimeout(() => {
+                if (fullDemoMode && currentScene < 4) {
+                    currentScene++;
+                    playSceneSequence();
+                } else if (fullDemoMode && currentScene === 4) {
+                    // End of demo
+                    fullDemoMode = false;
+                    isPlaying = false;
+                    document.getElementById('playBtn').textContent = '▶️';
+                    showNotification('Demo completed! 🎉', 'success');
+                }
+            }, 4000);
+        }
+        
+        function animateFormFilling() {
+            const nameInput = document.getElementById('nameInput');
+            const emailInput = document.getElementById('emailInput');
+            const eventSelect = document.getElementById('eventSelect');
+            
+            // Type name
+            let nameText = 'John Doe';
+            let nameIndex = 0;
+            nameInput.value = '';
+            nameInput.classList.add('typing-animation');
+            
+            const typeInterval = setInterval(() => {
+                if (nameIndex < nameText.length) {
+                    nameInput.value += nameText[nameIndex];
+                    nameIndex++;
+                } else {
+                    clearInterval(typeInterval);
+                    nameInput.classList.remove('typing-animation');
+                    
+                    // Fill email
+                    setTimeout(() => {
+                        emailInput.value = 'john.doe@example.com';
+                        
+                        // Select event
+                        setTimeout(() => {
+                            eventSelect.value = 'Tech Summit 2024';
+                            
+                            // Submit form
+                            setTimeout(() => {
+                                submitForm();
+                            }, 1000);
+                        }, 500);
+                    }, 500);
+                }
+            }, 100);
+        }
+        
+        function animateDataTransfer() {
+            // Restart animation
+            const packet = document.querySelector('.data-packet');
+            packet.style.animation = 'none';
+            setTimeout(() => {
+                packet.style.animation = 'movePacket 3s ease-in-out';
+            }, 10);
+        }
+        
+        function animateExcelUpdate() {
+            // Show new row after delay
+            setTimeout(() => {
+                const newRow = document.getElementById('newRow');
+                const newName = document.getElementById('newName');
+                const newEmail = document.getElementById('newEmail');
+                const newEvent = document.getElementById('newEvent');
+                
+                newRow.style.display = 'table-row';
+                newRow.classList.add('new-row');
+                newName.textContent = 'John Doe';
+                newEmail.textContent = 'john.doe@example.com';
+                newEvent.textContent = 'Tech Summit 2024';
+            }, 1000);
+        }
+        
+        function animateEmailDelivery() {
+            // Update email content
+            document.getElementById('emailName').textContent = 'John Doe';
+            document.getElementById('ticketEvent').textContent = 'Tech Summit 2024';
+            document.getElementById('ticketId').textContent = 'EVT-2404-0003';
+        }
+        
+        function submitForm() {
+            if (fullDemoMode) {
+                // Auto advance to next scene
+                setTimeout(() => {
+                    if (currentScene < 4) {
+                        currentScene++;
+                        playSceneSequence();
+                    }
+                }, 1000);
+            }
+        }
+        
+        function togglePlay() {
+            if (isPlaying) {
+                stopVideo();
+            } else {
+                playFullDemo();
+            }
+        }
+        
+        function stopVideo() {
+            isPlaying = false;
+            fullDemoMode = false;
+            document.getElementById('playBtn').textContent = '▶️';
+            if (videoTimer) {
+                clearInterval(videoTimer);
+            }
+        }
+        
+        function resetProgress() {
+            currentProgress = 0;
+            updateProgress();
+        }
+        
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = currentProgress + '%';
+            
+            const currentTime = Math.floor((currentProgress / 100) * 16); // 16 seconds total
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            document.getElementById('timeDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')} / 0:16`;
+        }
+        
+        function seekVideo(event) {
+            const progressBar = event.currentTarget;
+            const rect = progressBar.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percentage = (x / rect.width) * 100;
+            currentProgress = Math.max(0, Math.min(100, percentage));
+            updateProgress();
+        }
+        
+        function toggleMute() {
+            event.target.textContent = event.target.textContent === '🔊' ? '🔇' : '🔊';
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+                background: ${type === 'success' ? '#48bb78' : '#667eea'};
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
